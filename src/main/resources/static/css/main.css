@@ -875,49 +875,42 @@ body {
     }
 }
 
-@media (max-width: 480px) {
-    body {
-        padding: 0 1rem;
-    }
-    
-    .navbar {
-        backdrop-filter: blur(20px);
-    }
-    
-    .nav-container {
-        padding: 0 1rem;
-    }
-    
-    .hero-content, .info-container, .cta-container {
-        padding: 0 1rem;
-    }
-    
-    .hero-features {
+/* 768px 이하에서의 기본 반응형 설정 */
+@media (max-width: 768px) {
+    .hero-content {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 40px;
+        text-align: center;
     }
     
-    .feature-item {
-        padding: 16px;
-        border-radius: 12px;
-    }
-    
-    .section-title {
+    .hero-title {
         font-size: 2.2rem;
     }
     
-    .cta-button {
-        padding: 20px 32px;
-        font-size: 1.1rem;
+    .personality-grid {
+        transform: none;
     }
     
-    /* 테스트 페이지 모바일 대응 */
-    .test-container {
-        padding: 0 1rem;
+    .hero-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
     }
     
-    .test-header h1 {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-menu {
+        display: none; /* 모바일에서는 햄버거 메뉴로 구현 예정 */
+    }
+    
+    .cta-title {
         font-size: 2rem;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
     }
 }
 
@@ -1672,94 +1665,474 @@ body {
     font-weight: 600;
 }
 
-/* 모바일 대응 */
+/* 모바일 대응 - 개선된 버전 */
 @media (max-width: 768px) {
-    .test-feature-grid {
+    /* 전체 패딩 줄이기 */
+    body {
+        padding: 0 1rem;
+    }
+    
+    /* 네비게이션 최적화 */
+    .nav-container {
+        padding: 0 1rem;
+        height: 60px;
+    }
+    
+    .nav-logo {
+        font-size: 1.2rem;
+    }
+    
+    .nav-menu {
+        display: none; /* 햄버거 메뉴로 대체 예정 */
+    }
+    
+    .btn-nav-primary,
+    .btn-nav-secondary {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    /* 메인 컨테이너 */
+    .main-container,
+    .test-container {
+        margin-top: 60px;
+    }
+    
+    /* 히어로 섹션 */
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
+        padding: 0 1rem;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .hero-features {
         grid-template-columns: 1fr;
         gap: 12px;
     }
     
-    .process-steps {
-        flex-direction: column;
-        gap: 16px;
+    .feature-item {
+        padding: 16px;
+        border-radius: 12px;
     }
     
-    .process-arrow {
-        transform: rotate(90deg);
+    .hero-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
     }
     
+    .btn-large {
+        padding: 14px 24px;
+        font-size: 1rem;
+        min-height: 48px;
+    }
+    
+    /* 테스트 페이지 최적화 */
+    .test-container .container {
+        padding: 20px 0;
+    }
+    
+    .test-header h1,
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .test-header p,
+    .header p {
+        font-size: 1rem;
+    }
+    
+    /* 질문 컨테이너 - 가장 중요한 부분 */
     .question-container {
-        padding: 32px 24px; /* 모바일에서 패딩 조정 */
-        margin: 0 16px;
-        max-width: 100%; /* 모바일에서 최대 너비 조정 */
+        padding: 20px 16px; /* 대폭 축소: 32px 24px → 20px 16px */
+        margin: 0 8px; /* 좌우 여백도 줄임 */
+        max-width: 100%;
+        border-radius: 20px; /* 둥근 모서리도 줄임 */
+    }
+    
+    .progress-bar {
+        height: 8px; /* 진행바 높이 줄임 */
+        margin-bottom: 24px;
+    }
+    
+    .question-number {
+        font-size: 0.95rem;
+        padding: 8px 16px;
+        margin-bottom: 20px;
     }
     
     .question-title {
-        font-size: 1.4rem; /* 모바일 제목 크기 조정 */
+        font-size: 1.3rem; /* 제목 크기 줄임: 1.4rem → 1.3rem */
+        margin-bottom: 24px;
+        padding: 0 8px;
+        line-height: 1.4;
     }
     
+    /* 입력칸 최적화 - 핵심 개선사항 */
     .question-input {
-        min-height: 320px; /* 모바일에서는 적절히 조정: 400px → 320px */
-        padding: 28px; /* 모바일 패딩 조정 */
-        font-size: 1.2rem; /* 모바일 글자 크기 */
+        min-height: 200px; /* 대폭 줄임: 320px → 200px */
+        padding: 16px; /* 패딩 줄임: 28px → 16px */
+        font-size: 1rem; /* 글자 크기 줄임: 1.2rem → 1rem */
+        line-height: 1.6; /* 줄간격 줄임 */
+        border-radius: 16px;
+        margin-bottom: 20px;
     }
     
+    .question-input::placeholder {
+        font-size: 0.9rem; /* 플레이스홀더 크기 줄임 */
+    }
+    
+    .question-input:focus {
+        transform: scale(1.01); /* 포커스 시 확대 효과 줄임 */
+    }
+    
+    /* 버튼 영역 최적화 */
     .question-buttons {
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
+        margin-top: 24px;
+        padding: 16px 0;
     }
     
     .btn-prev,
     .btn-next {
         width: 100%;
-        padding: 18px 24px;
-        font-size: 1.1rem;
+        padding: 14px 20px; /* 패딩 줄임 */
+        font-size: 1rem; /* 글자 크기 줄임 */
+        min-height: 48px; /* 최소 높이 줄임 */
+        border-radius: 12px;
     }
     
-    /* 새로운 버튼들 모바일 대응 */
+    /* 테스트 시작 버튼들 */
     .btn-test-main {
-        min-width: 280px;
-        padding: 24px 32px;
+        min-width: 260px; /* 너비 줄임 */
+        padding: 20px 24px; /* 패딩 줄임 */
     }
     
     .btn-test-main .btn-icon {
-        font-size: 2rem;
+        font-size: 1.8rem; /* 아이콘 크기 줄임 */
     }
     
     .btn-test-main .btn-text {
-        font-size: 1.2rem;
+        font-size: 1.1rem; /* 텍스트 크기 줄임 */
     }
     
     .btn-test-main .btn-subtitle {
-        font-size: 0.9rem;
+        font-size: 0.85rem; /* 서브타이틀 크기 줄임 */
     }
     
-    .btn-continue,
+    .btn-continue {
+        padding: 14px 24px;
+        font-size: 1rem;
+    }
+    
     .btn-test-secondary {
-        width: auto;
-        max-width: 100%;
+        padding: 8px 16px;
+        font-size: 0.85rem;
     }
     
-    /* 새로 추가된 섹션들 모바일 대응 */
+    /* 기능 소개 섹션 */
+    .test-feature-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .test-feature-item {
+        padding: 14px;
+        border-radius: 12px;
+    }
+    
+    .test-feature-item .feature-icon {
+        font-size: 1.3rem;
+        width: 36px;
+    }
+    
+    .test-feature-item .feature-text strong {
+        font-size: 0.85rem;
+    }
+    
+    .test-feature-item .feature-text span {
+        font-size: 0.75rem;
+    }
+    
+    /* 프로세스 단계 */
+    .process-steps {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .process-arrow {
+        transform: rotate(90deg);
+        font-size: 1rem;
+    }
+    
+    .process-step {
+        min-width: auto;
+        padding: 12px 16px;
+    }
+    
+    .step-number {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+    
+    .step-content strong {
+        font-size: 0.85rem;
+    }
+    
+    .step-content span {
+        font-size: 0.75rem;
+    }
+    
+    /* FAQ와 통계 섹션 */
     .test-faq,
     .test-stats {
-        margin: 30px 0;
-        padding: 24px;
+        margin: 24px 0;
+        padding: 20px;
+        border-radius: 16px;
+    }
+    
+    .test-faq h3,
+    .test-stats h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
     }
     
     .faq-grid,
     .stats-grid {
         grid-template-columns: 1fr;
-        gap: 16px;
+        gap: 12px;
     }
     
     .faq-item,
     .stat-item {
-        padding: 20px;
+        padding: 16px;
+        border-radius: 12px;
+    }
+    
+    .faq-item h4 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+    
+    .faq-item p {
+        font-size: 0.85rem;
+        line-height: 1.5;
     }
     
     .stat-number {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    /* 정보 섹션 */
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .info-container {
+        padding: 0 1rem;
+    }
+    
+    .section-title {
+        font-size: 2.2rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+        margin-bottom: 40px;
+    }
+    
+    .info-card {
+        padding: 24px 20px;
+        border-radius: 16px;
+    }
+    
+    .info-icon {
+        font-size: 2rem;
+        margin-bottom: 16px;
+    }
+    
+    .info-title {
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+    }
+    
+    .info-description {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 16px;
+    }
+    
+    .info-list li {
+        font-size: 0.85rem;
+        padding: 4px 0;
+        padding-left: 20px;
+    }
+    
+    /* CTA 섹션 */
+    .cta-section {
+        padding: 60px 0;
+    }
+    
+    .cta-container {
+        padding: 0 1rem;
+    }
+    
+    .cta-title {
+        font-size: 2rem;
+    }
+    
+    .cta-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 32px;
+    }
+    
+    .cta-button {
+        padding: 18px 32px;
+        font-size: 1.1rem;
+        border-radius: 12px;
+    }
+    
+    .cta-note {
+        margin-top: 24px;
+        font-size: 0.9rem;
+    }
+    
+    /* 푸터 */
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .footer-links {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* 더 작은 모바일 화면 (480px 이하) - 추가 최적화 */
+@media (max-width: 480px) {
+    body {
+        padding: 0 0.5rem;
+    }
+    
+    .nav-container {
+        padding: 0 0.5rem;
+    }
+    
+    .question-container {
+        padding: 16px 12px; /* 더욱 축소 */
+        margin: 0 4px;
+        border-radius: 16px;
+    }
+    
+    .question-title {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        padding: 0 4px;
+    }
+    
+    .question-input {
+        min-height: 180px; /* 더 작게 */
+        padding: 14px; /* 패딩 더 줄임 */
+        font-size: 0.95rem;
+        border-radius: 12px;
+    }
+    
+    .question-input::placeholder {
+        font-size: 0.85rem;
+    }
+    
+    .btn-prev,
+    .btn-next {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+    
+    .btn-test-main {
+        min-width: 240px;
+        padding: 18px 20px;
+    }
+    
+    .btn-test-main .btn-icon {
+        font-size: 1.6rem;
+    }
+    
+    .btn-test-main .btn-text {
+        font-size: 1rem;
+    }
+    
+    .btn-test-main .btn-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .test-faq,
+    .test-stats {
+        padding: 16px;
+        margin: 20px 0;
+    }
+    
+    .test-feature-item {
+        padding: 12px;
+    }
+    
+    .process-step {
+        padding: 10px 14px;
+    }
+    
+    /* 히어로 섹션 추가 최적화 */
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .feature-item {
+        padding: 14px;
+    }
+    
+    .personality-grid {
+        transform: none;
+        gap: 16px;
+    }
+    
+    .personality-card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+    
+    .card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+    
+    .card-title {
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+    
+    .card-description {
+        font-size: 0.8rem;
     }
 }
 
@@ -1771,6 +2144,110 @@ body {
     
     .personality-card {
         transition: none;
+    }
+}
+
+/* 모바일 특화 개선사항 */
+@media (max-width: 768px) {
+    /* 터치 친화적인 최소 크기 보장 */
+    button, .btn-primary, .btn-secondary, .btn-large, .nav-link {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* 모바일에서 호버 효과 비활성화 */
+    .question-input:hover,
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .feature-item:hover,
+    .info-card:hover {
+        transform: none;
+    }
+    
+    /* 모바일 키보드 대응 - 뷰포트 높이 동적 조정 */
+    .question-container {
+        min-height: auto;
+        height: auto;
+    }
+    
+    /* iOS Safari 줌 방지 */
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+    
+    /* 터치 스크롤 개선 */
+    .question-input {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+    
+    /* 모바일에서 텍스트 선택 개선 */
+    .question-input {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+}
+
+/* 모바일 가로 모드 최적화 */
+@media (max-width: 768px) and (orientation: landscape) {
+    .question-container {
+        padding: 12px 16px;
+    }
+    
+    .question-input {
+        min-height: 120px;
+        padding: 12px;
+    }
+    
+    .question-title {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+    }
+    
+    .question-buttons {
+        margin-top: 16px;
+        padding: 12px 0;
+    }
+}
+
+/* 초소형 화면 (360px 이하) 최적화 */
+@media (max-width: 360px) {
+    .question-container {
+        padding: 12px 8px;
+        margin: 0 2px;
+        border-radius: 12px;
+    }
+    
+    .question-title {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+    }
+    
+    .question-input {
+        min-height: 160px;
+        padding: 12px;
+        font-size: 0.9rem;
+        border-radius: 10px;
+    }
+    
+    .btn-prev,
+    .btn-next {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        min-height: 40px;
+    }
+    
+    .btn-test-main {
+        min-width: 220px;
+        padding: 16px 18px;
+    }
+    
+    .btn-test-main .btn-text {
+        font-size: 0.95rem;
+    }
+    
+    .btn-test-main .btn-subtitle {
+        font-size: 0.75rem;
     }
 }
 
@@ -1804,5 +2281,26 @@ body {
     .info-card .info-list li,
     .info-card li {
         color: #475569 !important;
+    }
+    
+    /* 질문 입력 영역도 화이트 유지 */
+    .question-container {
+        background: #ffffff !important;
+        border-color: rgba(226, 232, 240, 0.6) !important;
+    }
+    
+    .question-input {
+        background: #ffffff !important;
+        color: #1e293b !important;
+        border-color: rgba(226, 232, 240, 0.8) !important;
+    }
+    
+    .question-title {
+        color: #1e293b !important;
+    }
+    
+    .question-number {
+        color: #64748b !important;
+        background: rgba(100, 116, 139, 0.1) !important;
     }
 }

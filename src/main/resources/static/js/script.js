@@ -97,6 +97,7 @@ class PersonalityTest {
         this.currentQuestionIndex = 0;
         this.answers = [];
         this.lastResults = null;
+        this.lastTap = 0; // 모바일 더블탭 방지용
         // API 키는 더 이상 클라이언트에서 관리하지 않음 (서버에서만 사용)
         this.init();
     }
@@ -393,6 +394,9 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
         setTimeout(() => {
             document.getElementById('answer').focus();
         }, 100);
+
+        // 모바일 최적화: 입력 필드 관련 이벤트 처리
+        this.addMobileOptimizations();
     }
 
     nextQuestion() {
@@ -847,10 +851,139 @@ ${questions.map((question, index) => `
             });
         }
     }
+
+    // 모바일 최적화 메서드들
+    addMobileOptimizations() {
+        const answerElement = document.getElementById('answer');
+        if (!answerElement) return;
+
+        // 모바일 디바이스 체크
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // 모바일에서 키보드가 올라올 때 스크롤 조정
+            answerElement.addEventListener('focus', () => {
+                setTimeout(() => {
+                    answerElement.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'nearest'
+                    });
+                }, 300); // 키보드 애니메이션 후 스크롤
+            });
+
+            // 터치 스크롤 개선
+            answerElement.style.webkitOverflowScrolling = 'touch';
+            answerElement.style.overscrollBehavior = 'contain';
+
+            // iOS Safari 줌 방지 (16px 미만일 때 발생)
+            if (window.getComputedStyle(answerElement).fontSize.replace('px', '') < 16) {
+                answerElement.style.fontSize = '16px';
+            }
+
+            // 더블 탭 줌 방지
+            answerElement.addEventListener('touchend', (e) => {
+                const now = new Date().getTime();
+                const timesince = now - (this.lastTap || 0);
+                if (timesince < 300 && timesince > 0) {
+                    e.preventDefault();
+                }
+                this.lastTap = now;
+            });
+
+            // 화면 회전 시 레이아웃 재조정
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    if (document.activeElement === answerElement) {
+                        answerElement.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center'
+                        });
+                    }
+                }, 100);
+            });
+
+            // 가상 키보드 대응 (실험적)
+            window.addEventListener('resize', () => {
+                if (document.activeElement === answerElement) {
+                    const windowHeight = window.innerHeight;
+                    const documentHeight = document.documentElement.clientHeight;
+                    
+                    // 키보드가 올라왔을 때 (화면 높이가 줄어들었을 때)
+                    if (windowHeight < documentHeight * 0.75) {
+                        document.body.style.transform = 'translateY(-50px)';
+                    } else {
+                        document.body.style.transform = 'translateY(0)';
+                    }
+                }
+            });
+
+            // 블러 시 변형 초기화
+            answerElement.addEventListener('blur', () => {
+                document.body.style.transform = 'translateY(0)';
+            });
+        }
+
+        // 자동 높이 조절 (모든 디바이스)
+        answerElement.addEventListener('input', () => {
+            this.autoResizeTextarea(answerElement);
+        });
+    }
+
+    // 텍스트영역 자동 높이 조절
+    autoResizeTextarea(element) {
+        // 현재 내용에 맞게 높이 조절
+        element.style.height = 'auto';
+        const scrollHeight = element.scrollHeight;
+        const minHeight = window.innerWidth <= 768 ? 200 : 400; // 모바일에서는 더 작게
+        const maxHeight = window.innerHeight * 0.6; // 화면 높이의 60%까지
+        
+        element.style.height = Math.min(Math.max(scrollHeight, minHeight), maxHeight) + 'px';
+    }
+
+    // 모바일 디바이스 체크
+    isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+               (window.innerWidth <= 768 && window.innerHeight <= 1024);
+    }
+
+    // 화면 크기에 따른 동적 스타일 조정
+    adjustForScreenSize() {
+        const isMobile = this.isMobileDevice();
+        const content = document.getElementById('content');
+        
+        if (isMobile && content) {
+            // 모바일에서 추가 여백 조정
+            content.style.padding = '1rem 0.5rem';
+            
+            // 질문 컨테이너 찾기
+            const questionContainer = content.querySelector('.question-container');
+            if (questionContainer) {
+                questionContainer.style.margin = '0 0.25rem';
+                questionContainer.style.padding = '16px 12px';
+            }
+        }
+    }
 }
 
 // 페이지 로드 시 테스트 시작
 let personalityTest;
 document.addEventListener('DOMContentLoaded', () => {
     personalityTest = new PersonalityTest();
+    
+    // 화면 크기 변경 시 레이아웃 재조정
+    window.addEventListener('resize', () => {
+        if (personalityTest) {
+            personalityTest.adjustForScreenSize();
+        }
+    });
+    
+    // 화면 회전 시 레이아웃 재조정
+    window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+            if (personalityTest) {
+                personalityTest.adjustForScreenSize();
+            }
+        }, 100);
+    });
 });
