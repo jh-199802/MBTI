@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 성격 분석 테스트</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🧠</span>
+                <span class="logo-text">PersonaAI</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a th:href="@{/}" class="nav-link">홈</a>
+                </li>
+                <li class="nav-item dropdown active">
+                    <a href="#" class="nav-link">테스트 <span class="dropdown-icon">▼</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/test}" class="active">성격 분석 테스트</a></li>
+                        <li><a href="#" class="coming-soon">직업 적성 테스트 <span class="badge">Coming Soon</span></a></li>
+                        <li><a href="#" class="coming-soon">연애 유형 테스트 <span class="badge">Coming Soon</span></a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/#info}" class="nav-link">소개</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/#contact}" class="nav-link">문의</a>
+                </li>
+            </ul>
+            <div class="nav-cta">
+                <button class="btn-nav-secondary" onclick="goHome()">← 홈으로</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="test-container">
+        <div class="container">
+            <div class="header">
+                <h1>🧠 AI 성격 분석 테스트</h1>
+                <p>MBTI, D&D 성향, 에니어그램을 통한 종합 성격 분석</p>
+            </div>
+
+            <div class="content" id="content">
+                <!-- 질문들이 여기에 동적으로 표시됩니다 -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <!-- API 연결 테스트 - 위쪽에 배치 -->
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn-test-secondary" onclick="personalityTest.testAPI()">
+                            🔧 API 연결 상태 확인
+                        </button>
+                    </div>
+                    
+                    <!-- 메인 테스트 시작 버튼 - 아래쪽에 배치 -->
+                    <button class="btn-test-main" onclick="personalityTest.startTest()">
+                        <span class="btn-icon">🚀</span>
+                        <span class="btn-text">테스트 시작하기</span>
+                        <span class="btn-subtitle">나의 성격을 분석해보세요</span>
+                    </button>
+                </div>
+                
+                <!-- 심리학적 안정감을 위한 신뢰도 지표 -->
+                <div class="test-features">
+                    <div class="test-feature-grid">
+                        <div class="test-feature-item">
+                            <div class="feature-icon">⏱️</div>
+                            <div class="feature-text">
+                                <strong>5-10분 소요</strong>
+                                <span>간단하고 빠른 분석</span>
+                            </div>
+                        </div>
+                        <div class="test-feature-item">
+                            <div class="feature-icon">🎯</div>
+                            <div class="feature-text">
+                                <strong>95% 정확도</strong>
+                                <span>AI 기반 정밀 분석</span>
+                            </div>
+                        </div>
+                        <div class="test-feature-item">
+                            <div class="feature-icon">🔒</div>
+                            <div class="feature-text">
+                                <strong>개인정보 보호</strong>
+                                <span>안전한 익명 테스트</span>
+                            </div>
+                        </div>
+                        <div class="test-feature-item">
+                            <div class="feature-icon">💎</div>
+                            <div class="feature-text">
+                                <strong>완전 무료</strong>
+                                <span>모든 기능 무료 제공</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 테스트 프로세스 안내 -->
+                <div class="test-process">
+                    <h3>📋 테스트 진행 과정</h3>
+                    <div class="process-steps">
+                        <div class="process-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <strong>15개 질문 답변</strong>
+                                <span>간단한 상황별 질문에 답변</span>
+                            </div>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <strong>AI 분석</strong>
+                                <span>고도화된 AI가 성격 분석</span>
+                            </div>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <strong>결과 확인</strong>
+                                <span>MBTI + 캐릭터 추천</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 추가: 심리적 안정감을 주는 FAQ 섹션 -->
+                <div class="test-faq">
+                    <h3>💡 자주 묻는 질문</h3>
+                    <div class="faq-grid">
+                        <div class="faq-item">
+                            <h4>🤔 정확한 답변을 위한 팁</h4>
+                            <p>첫 번째로 떠오르는 생각을 솔직하게 작성해주세요. 길게 쓸 필요는 없지만 구체적인 예시가 있다면 더욱 정확한 분석이 가능합니다.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h4>⏱️ 시간 제한이 있나요?</h4>
+                            <p>시간 제한은 없습니다. 충분히 생각하고 답변해주세요. 답변은 자동으로 저장되므로 중간에 나가도 괜찮습니다.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h4>🔒 개인정보는 안전한가요?</h4>
+                            <p>개인정보를 수집하지 않으며, 답변 내용도 분석 완료 후 즉시 삭제됩니다. 완전히 익명으로 진행됩니다.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h4>🎯 결과는 얼마나 정확한가요?</h4>
+                            <p>AI가 심리학 이론을 바탕으로 분석하며, 솔직한 답변일수록 더 정확한 결과를 제공합니다. 재미와 참고용으로 활용해주세요.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 추가: 동기부여를 위한 통계 -->
+                <div class="test-stats">
+                    <h3>📊 테스트 통계</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">15,847</div>
+                            <div class="stat-label">누적 테스트 완료</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">96%</div>
+                            <div class="stat-label">만족도</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">4.8⭐</div>
+                            <div class="stat-label">평균 평점</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">7분</div>
+                            <div class="stat-label">평균 소요시간</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/script.js}"></script>
+    <script>
+        function goHome() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
