@@ -104,6 +104,24 @@ public class MainController {
     }
     
     /**
+     * 헬스체크 엔드포인트 (서버 상태 확인용)
+     */
+    @GetMapping("/health")
+    @ResponseBody
+    public Map<String, Object> health() {
+        Map<String, Object> status = new HashMap<>();
+        status.put("status", "UP");
+        status.put("timestamp", java.time.Instant.now().toString());
+        status.put("service", "MBTI Test API");
+        
+        // API 키 설정 상태 확인 (키 값은 노출하지 않음)
+        boolean apiKeyConfigured = aiKey != null && !aiKey.equals("NOT_SET") && !aiKey.isEmpty();
+        status.put("apiKeyConfigured", apiKeyConfigured);
+        
+        return status;
+    }
+    
+    /**
      * API 연결 테스트 (서버에서 처리)
      */
     @PostMapping("/api/test")

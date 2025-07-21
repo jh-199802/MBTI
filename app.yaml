@@ -1,0 +1,45 @@
+runtime: java11
+service: default
+instance_class: F2
+
+# 환경변수 설정 (실제 배포시 수정 필요)
+env_variables:
+  AI_KEY: "여기에_실제_Gemini_API_키_입력"
+  SPRING_PROFILES_ACTIVE: "prod"
+
+# 자동 스케일링 설정
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10
+  target_cpu_utilization: 0.6
+  target_throughput_utilization: 0.8
+
+# 헬스체크 설정
+health_check:
+  enable_health_check: true
+  check_interval_sec: 5
+  timeout_sec: 4
+  unhealthy_threshold: 2
+  healthy_threshold: 2
+  restart_threshold: 60
+
+# 리소스 설정
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
+
+# 네트워크 설정
+network:
+  forwarded_ports:
+    - 8080
+
+# 정적 파일 설정
+handlers:
+  - url: /static
+    static_dir: src/main/resources/static
+    secure: always
+  
+  - url: /.*
+    script: auto
+    secure: always
