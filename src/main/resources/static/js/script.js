@@ -935,8 +935,8 @@ ${questions.map((question, index) => `
         // 현재 내용에 맞게 높이 조절
         element.style.height = 'auto';
         const scrollHeight = element.scrollHeight;
-        const minHeight = window.innerWidth <= 768 ? 200 : 400; // 모바일에서는 더 작게
-        const maxHeight = window.innerHeight * 0.6; // 화면 높이의 60%까지
+        const minHeight = window.innerWidth <= 480 ? 120 : window.innerWidth <= 768 ? 160 : 400; // 모바일에서 더 작게
+        const maxHeight = window.innerHeight * 0.5; // 화면 높이의 50%까지 (60%에서 줄임)
         
         element.style.height = Math.min(Math.max(scrollHeight, minHeight), maxHeight) + 'px';
     }

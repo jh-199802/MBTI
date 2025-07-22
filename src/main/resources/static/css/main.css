@@ -1738,7 +1738,7 @@ body {
     
     /* 테스트 페이지 최적화 */
     .test-container .container {
-        padding: 20px 0;
+        padding: 15px 0; /* 더 줄임: 20px → 15px */
     }
     
     .test-header h1,
@@ -1751,12 +1751,23 @@ body {
         font-size: 1rem;
     }
     
+    /* 테스트 시작 버튼 중앙 정렬 강제 */
+    .content {
+        text-align: center;
+    }
+    
+    .btn-test-main {
+        display: block !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+    }
+    
     /* 질문 컨테이너 - 가장 중요한 부분 */
     .question-container {
-        padding: 20px 16px; /* 대폭 축소: 32px 24px → 20px 16px */
-        margin: 0 8px; /* 좌우 여백도 줄임 */
+        padding: 12px 8px; /* 더 줄임: 20px 16px → 12px 8px */
+        margin: 0 4px; /* 좌우 여백도 더 줄임: 8px → 4px */
         max-width: 100%;
-        border-radius: 20px; /* 둥근 모서리도 줄임 */
+        border-radius: 16px; /* 둥근 모서리도 줄임 */
     }
     
     .progress-bar {
@@ -1779,12 +1790,14 @@ body {
     
     /* 입력칸 최적화 - 핵심 개선사항 */
     .question-input {
-        min-height: 200px; /* 대폭 줄임: 320px → 200px */
-        padding: 16px; /* 패딩 줄임: 28px → 16px */
+        min-height: 160px; /* 더 줄임: 200px → 160px */
+        padding: 12px; /* 패딩 줄임: 16px → 12px */
         font-size: 1rem; /* 글자 크기 줄임: 1.2rem → 1rem */
-        line-height: 1.6; /* 줄간격 줄임 */
-        border-radius: 16px;
-        margin-bottom: 20px;
+        line-height: 1.5; /* 줄간격 줄임: 1.6 → 1.5 */
+        border-radius: 12px; /* 둥근 모서리 줄임 */
+        margin-bottom: 16px; /* 하단 여백 줄임 */
+        width: calc(100% - 24px); /* 더 넓게: 좌우 여백 최소화 */
+        max-width: none; /* 최대 너비 제한 해제 */
     }
     
     .question-input::placeholder {
@@ -1798,24 +1811,26 @@ body {
     /* 버튼 영역 최적화 */
     .question-buttons {
         flex-direction: column;
-        gap: 12px;
-        margin-top: 24px;
-        padding: 16px 0;
+        gap: 10px; /* 간격 줄임: 12px → 10px */
+        margin-top: 16px; /* 상단 여백 줄임: 24px → 16px */
+        padding: 12px 0; /* 패딩 줄임: 16px → 12px */
     }
     
     .btn-prev,
     .btn-next {
         width: 100%;
-        padding: 14px 20px; /* 패딩 줄임 */
-        font-size: 1rem; /* 글자 크기 줄임 */
-        min-height: 48px; /* 최소 높이 줄임 */
-        border-radius: 12px;
+        padding: 12px 18px; /* 패딩 줄임: 14px 20px → 12px 18px */
+        font-size: 0.95rem; /* 글자 크기 줄임: 1rem → 0.95rem */
+        min-height: 44px; /* 최소 높이 줄임: 48px → 44px */
+        border-radius: 10px; /* 둥근 모서리 줄임 */
     }
     
     /* 테스트 시작 버튼들 */
     .btn-test-main {
-        min-width: 260px; /* 너비 줄임 */
-        padding: 20px 24px; /* 패딩 줄임 */
+        min-width: 240px; /* 너비 줄임: 260px → 240px */
+        padding: 16px 20px; /* 패딩 줄임: 20px 24px → 16px 20px */
+        margin: 0 auto; /* 중앙 정렬 강제 */
+        display: block; /* 블록 요소로 변경 */
     }
     
     .btn-test-main .btn-icon {
@@ -2030,72 +2045,81 @@ body {
 /* 더 작은 모바일 화면 (480px 이하) - 추가 최적화 */
 @media (max-width: 480px) {
     body {
-        padding: 0 0.5rem;
+        padding: 0 0.25rem; /* 더 줄임 */
     }
     
     .nav-container {
-        padding: 0 0.5rem;
+        padding: 0 0.25rem; /* 더 줄임 */
+    }
+    
+    /* 테스트 시작 버튼 중앙 정렬 강제 */
+    .content,
+    .content > div {
+        text-align: center !important;
+    }
+    
+    .btn-test-main {
+        display: block !important;
+        margin: 0 auto !important;
+        min-width: 220px; /* 더 줄임 */
+        padding: 14px 16px; /* 더 줄임 */
     }
     
     .question-container {
-        padding: 16px 12px; /* 더욱 축소 */
-        margin: 0 4px;
-        border-radius: 16px;
-    }
-    
-    .question-title {
-        font-size: 1.2rem;
-        margin-bottom: 20px;
-        padding: 0 4px;
-    }
-    
-    .question-input {
-        min-height: 180px; /* 더 작게 */
-        padding: 14px; /* 패딩 더 줄임 */
-        font-size: 0.95rem;
+        padding: 8px 6px; /* 더욱 축소: 16px 12px → 8px 6px */
+        margin: 0 2px; /* 좌우 여백 더 줄임 */
         border-radius: 12px;
     }
     
+    .question-title {
+        font-size: 1.1rem; /* 제목 크기 줄임 */
+        margin-bottom: 12px; /* 여백 줄임 */
+        padding: 0 2px; /* 패딩 줄임 */
+    }
+    
+    .question-input {
+        min-height: 140px; /* 더 작게: 180px → 140px */
+        padding: 10px; /* 패딩 더 줄임: 14px → 10px */
+        font-size: 0.9rem; /* 글자 크기 줄임 */
+        border-radius: 10px;
+        width: calc(100% - 20px); /* 더 넓게 */
+    }
+    
     .question-input::placeholder {
-        font-size: 0.85rem;
+        font-size: 0.8rem; /* 플레이스홀더 크기 줄임 */
     }
     
     .btn-prev,
     .btn-next {
-        padding: 12px 16px;
-        font-size: 0.95rem;
-        min-height: 44px;
-    }
-    
-    .btn-test-main {
-        min-width: 240px;
-        padding: 18px 20px;
+        padding: 10px 14px; /* 패딩 더 줄임 */
+        font-size: 0.9rem; /* 글자 크기 줄임 */
+        min-height: 40px; /* 높이 줄임 */
     }
     
     .btn-test-main .btn-icon {
-        font-size: 1.6rem;
+        font-size: 1.4rem; /* 아이콘 크기 줄임 */
     }
     
     .btn-test-main .btn-text {
-        font-size: 1rem;
+        font-size: 0.95rem; /* 텍스트 크기 줄임 */
     }
     
     .btn-test-main .btn-subtitle {
-        font-size: 0.8rem;
+        font-size: 0.75rem; /* 서브타이틀 크기 줄임 */
     }
     
     .test-faq,
     .test-stats {
-        padding: 16px;
-        margin: 20px 0;
+        padding: 12px; /* 패딩 더 줄임 */
+        margin: 16px 0; /* 여백 줄임 */
     }
     
     .test-feature-item {
-        padding: 12px;
+        padding: 10px; /* 패딩 줄임 */
     }
     
     .process-step {
-        padding: 10px 14px;
+        padding: 8px 12px; /* 패딩 줄임 */
     }
     
     /* 히어로 섹션 추가 최적화 */
@@ -2149,6 +2173,26 @@ body {
 
 /* 모바일 특화 개선사항 */
 @media (max-width: 768px) {
+    /* 테스트 시작 버튼 중앙 정렬 강제 */
+    .content > div[style*="text-align: center"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .btn-test-main {
+        display: block !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+        align-self: center !important;
+    }
+    
+    .btn-test-secondary {
+        display: block !important;
+        margin: 0 auto !important;
+    }
+    
     /* 터치 친화적인 최소 크기 보장 */
     button, .btn-primary, .btn-secondary, .btn-large, .nav-link {
         min-height: 44px;
@@ -2213,41 +2257,44 @@ body {
 /* 초소형 화면 (360px 이하) 최적화 */
 @media (max-width: 360px) {
     .question-container {
-        padding: 12px 8px;
-        margin: 0 2px;
-        border-radius: 12px;
+        padding: 6px 4px; /* 더욱 축소 */
+        margin: 0 1px;
+        border-radius: 10px;
     }
     
     .question-title {
-        font-size: 1.1rem;
-        margin-bottom: 16px;
+        font-size: 1rem; /* 더 줄임 */
+        margin-bottom: 10px; /* 여백 줄임 */
     }
     
     .question-input {
-        min-height: 160px;
-        padding: 12px;
-        font-size: 0.9rem;
-        border-radius: 10px;
+        min-height: 120px; /* 더 작게: 160px → 120px */
+        padding: 8px; /* 패딩 더 줄임 */
+        font-size: 0.85rem; /* 글자 크기 줄임 */
+        border-radius: 8px;
+        width: calc(100% - 16px); /* 더 넓게 */
     }
     
     .btn-prev,
     .btn-next {
-        padding: 10px 14px;
-        font-size: 0.9rem;
-        min-height: 40px;
+        padding: 8px 12px; /* 패딩 더 줄임 */
+        font-size: 0.85rem; /* 글자 크기 줄임 */
+        min-height: 36px; /* 높이 줄임 */
     }
     
     .btn-test-main {
-        min-width: 220px;
-        padding: 16px 18px;
+        min-width: 200px; /* 너비 더 줄임 */
+        padding: 12px 14px; /* 패딩 더 줄임 */
+        display: block !important;
+        margin: 0 auto !important;
     }
     
     .btn-test-main .btn-text {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
     
     .btn-test-main .btn-subtitle {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
 }
 
