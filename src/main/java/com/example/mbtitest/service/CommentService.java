@@ -33,17 +33,21 @@ public class CommentService {
     public Comment addComment(Long resultId, String mbtiType, String nickname, 
                             String commentText, HttpServletRequest request) {
         
+        log.debug("댓글 작성 서비스 시작 - resultId: {}, mbtiType: {}, nickname: {}, commentText 길이: {}", 
+            resultId, mbtiType, nickname, commentText != null ? commentText.length() : 0);
+        
         // 입력 값 검증
         validateCommentInput(commentText, mbtiType);
         
         String userIp = getClientIpAddress(request);
+        log.debug("클라이언트 IP: {}", userIp);
         
         // 스팸 체크
         checkSpamPrevention(userIp);
         
         try {
             Comment comment = Comment.builder()
-                .resultId(resultId)
+                .resultId(resultId != null ? resultId : -1L)  // NULL 대신 -1 사용
                 .mbtiType(mbtiType.toUpperCase())
                 .nickname(nickname != null ? nickname.trim() : null)
                 .commentText(commentText.trim())
@@ -52,6 +56,8 @@ public class CommentService {
                 .isDeleted("N")
                 .build();
             
+            log.debug("댓글 엔티티 생성 완료: {}", comment);
+            
             Comment savedComment = commentRepository.save(comment);
             log.info("댓글 작성 완료 - ID: {}, MBTI: {}, IP: {}", 
                 savedComment.getCommentId(), mbtiType, userIp);
@@ -59,8 +65,8 @@ public class CommentService {
             return savedComment;
             
         } catch (Exception e) {
-            log.error("댓글 저장 중 오류 발생", e);
-            throw new RuntimeException("댓글 저장 중 오류가 발생했습니다.", e);
+            log.error("댓글 저장 중 오류 발생 - mbtiType: {}, commentText: {}", mbtiType, commentText, e);
+            throw new RuntimeException("댓글 저장 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
     }
     

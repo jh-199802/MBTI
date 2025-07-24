@@ -144,7 +144,105 @@
     gap: 0.5rem;
 }
 
+/* 로그인 프롬프트 */
+.login-prompt {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-prompt-content {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.login-prompt-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.login-prompt h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+}
+
+.login-prompt p {
+    font-size: 1rem;
+    color: #6b7280;
+    margin: 0 0 2rem 0;
+    line-height: 1.5;
+}
+
+.login-prompt-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.btn-login,
+.btn-register {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.btn-login {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.btn-register {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+}
+
+.btn-register:hover {
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+.login-prompt-note {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.login-prompt-note i {
+    color: #60a5fa;
+}
+
 /* 댓글 작성 폼 */
+.comment-form-section {
+    margin-bottom: 2rem;
+}
+
 .comment-form {
     display: flex;
     flex-direction: column;
@@ -723,6 +821,29 @@
     .more-btn {
         font-size: 0.7rem;
         padding: 0.25rem;
+    }
+    
+    /* 로그인 프롬프트 작은 화면 스타일 */
+    .login-prompt {
+        padding: 1rem;
+    }
+    
+    .login-prompt-icon {
+        font-size: 2.5rem;
+    }
+    
+    .login-prompt h3 {
+        font-size: 1.25rem;
+    }
+    
+    .login-prompt p {
+        font-size: 0.9rem;
+    }
+    
+    .btn-login,
+    .btn-register {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
     }
 }
 

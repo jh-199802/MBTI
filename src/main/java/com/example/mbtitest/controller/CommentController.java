@@ -89,36 +89,57 @@ public class CommentController {
      */
     @PostMapping("/api/add")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> addComment(@RequestBody Map<String, String> request,
+    public ResponseEntity<Map<String, Object>> addComment(@RequestBody Map<String, Object> request,
                                                         HttpServletRequest httpRequest) {
         try {
-            String resultIdStr = request.get("resultId");
-            String mbtiType = request.get("mbtiType");
-            String nickname = request.get("nickname");
-            String commentText = request.get("commentText");
+            log.info("댓글 작성 요청 받음: {}", request);
+            
+            // Object로 받아서 null 체크 후 String으로 변환
+            Object resultIdObj = request.get("resultId");
+            Object mbtiTypeObj = request.get("mbtiType");
+            Object nicknameObj = request.get("nickname");
+            Object commentTextObj = request.get("commentText");
+            
+            log.debug("Raw request data - resultId: {}, mbtiType: {}, nickname: {}, commentText: {}", 
+                resultIdObj, mbtiTypeObj, nicknameObj, commentTextObj);
+            
+            // 안전한 String 변환
+            String resultIdStr = (resultIdObj != null) ? resultIdObj.toString() : null;
+            String mbtiType = (mbtiTypeObj != null) ? mbtiTypeObj.toString() : null;
+            String nickname = (nicknameObj != null) ? nicknameObj.toString() : null;
+            String commentText = (commentTextObj != null) ? commentTextObj.toString() : null;
+            
+            log.debug("Converted data - resultIdStr: {}, mbtiType: {}, nickname: {}, commentText length: {}", 
+                resultIdStr, mbtiType, nickname, commentText != null ? commentText.length() : 0);
             
             // 입력값 검증
             if (mbtiType == null || mbtiType.trim().isEmpty()) {
+                log.warn("MBTI 타입이 비어있음");
                 return ResponseEntity.badRequest()
                     .body(Map.of("success", false, "message", "MBTI 타입을 선택해주세요."));
             }
             
             if (commentText == null || commentText.trim().isEmpty()) {
+                log.warn("댓글 내용이 비어있음");
                 return ResponseEntity.badRequest()
                     .body(Map.of("success", false, "message", "댓글 내용을 입력해주세요."));
             }
             
             Long resultId = null;
-            if (resultIdStr != null && !resultIdStr.trim().isEmpty()) {
+            if (resultIdStr != null && !resultIdStr.trim().isEmpty() && !"null".equals(resultIdStr)) {
                 try {
                     resultId = Long.parseLong(resultIdStr);
                 } catch (NumberFormatException e) {
-                    return ResponseEntity.badRequest()
-                        .body(Map.of("success", false, "message", "올바르지 않은 결과 ID입니다."));
+                    log.warn("올바르지 않은 resultId 형식: {}", resultIdStr);
+                    // resultId가 잘못된 형식이어도 댓글 작성은 계속 진행 (null로 처리)
                 }
             }
             
+            log.info("댓글 작성 시작 - MBTI: {}, 닉네임: {}, resultId: {}", mbtiType, nickname, resultId);
+            
             Comment comment = commentService.addComment(resultId, mbtiType, nickname, commentText, httpRequest);
+            
+            log.info("댓글 작성 성공 - ID: {}", comment.getCommentId());
             
             return ResponseEntity.ok(Map.of(
                 "success", true,

@@ -2,14 +2,122 @@
 let currentSort = 'recent';
 let commentPage = 1;
 let isLoading = false;
+let currentUser = null;
 
 /**
  * 커뮤니티 페이지 초기화
  */
 function initializeCommunityPage() {
+    checkUserLogin();
     setupSortButtons();
     setupMbtiFilters();
     loadComments(currentSort);
+}
+
+/**
+ * 사용자 로그인 상태 확인
+ */
+async function checkUserLogin() {
+    try {
+        const response = await fetch('/user/api/current');
+        const data = await response.json();
+        
+        if (data.loggedIn) {
+            currentUser = data.user;
+            showLoggedInUI();
+        } else {
+            showGuestUI();
+        }
+    } catch (error) {
+        console.error('사용자 상태 확인 오류:', error);
+        showGuestUI();
+    }
+}
+
+/**
+ * 로그인한 사용자 UI 표시
+ */
+function showLoggedInUI() {
+    const commentForm = document.getElementById('commentForm');
+    const loginPrompt = document.getElementById('loginPrompt');
+    
+    if (commentForm) {
+        commentForm.style.display = 'block';
+        
+        // 사용자 정보가 있으면 닉네임 미리 채우기
+        const nicknameInput = document.getElementById('nicknameInput');
+        if (nicknameInput && currentUser.nickname) {
+            nicknameInput.value = currentUser.nickname;
+        }
+        
+        // 사용자의 MBTI가 있으면 미리 선택
+        const mbtiSelect = document.getElementById('mbtiSelect');
+        if (mbtiSelect && currentUser.mbtiType) {
+            mbtiSelect.value = currentUser.mbtiType;
+            updateMbtiSelectStyle(mbtiSelect);
+        }
+        
+        setupCommentForm();
+        setupCharCounter();
+    }
+    
+    if (loginPrompt) {
+        loginPrompt.style.display = 'none';
+    }
+}
+
+/**
+ * 게스트 사용자 UI 표시
+ */
+function showGuestUI() {
+    const commentForm = document.getElementById('commentForm');
+    const loginPrompt = document.getElementById('loginPrompt');
+    
+    if (commentForm) {
+        commentForm.style.display = 'none';
+    }
+    
+    if (loginPrompt) {
+        loginPrompt.style.display = 'block';
+    } else {
+        // 로그인 프롬프트가 없으면 동적으로 생성
+        createLoginPrompt();
+    }
+}
+
+/**
+ * 로그인 프롬프트 생성
+ */
+function createLoginPrompt() {
+    const commentSection = document.querySelector('.comment-form-section');
+    if (!commentSection) return;
+    
+    const loginPrompt = document.createElement('div');
+    loginPrompt.id = 'loginPrompt';
+    loginPrompt.className = 'login-prompt';
+    loginPrompt.innerHTML = `
+        <div class="login-prompt-content">
+            <div class="login-prompt-icon">🔐</div>
+            <h3>로그인이 필요합니다</h3>
+            <p>커뮤니티에 댓글을 작성하려면 로그인해주세요!</p>
+            <div class="login-prompt-buttons">
+                <a href="/user/login?redirectUrl=${encodeURIComponent(window.location.pathname)}" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    로그인
+                </a>
+                <a href="/user/register" class="btn-register">
+                    <i class="fas fa-user-plus"></i>
+                    회원가입
+                </a>
+            </div>
+            <p class="login-prompt-note">
+                <i class="fas fa-info-circle"></i>
+                로그인 없이도 댓글은 볼 수 있어요!
+            </p>
+        </div>
+    `;
+    
+    commentSection.appendChild(loginPrompt);
 }
 
 /**
@@ -21,6 +129,16 @@ function setupCommentForm() {
 
     commentForm.addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // 로그인 상태 재확인
+        if (!currentUser) {
+            showToast('로그인이 필요합니다!', 'error');
+            setTimeout(() => {
+                window.location.href = `/user/login?redirectUrl=${encodeURIComponent(window.location.pathname)}`;
+            }, 1500);
+            return;
+        }
+        
         submitComment();
     });
 
@@ -245,13 +363,19 @@ function submitComment() {
     const form = document.getElementById('commentForm');
     if (!form) return;
     
-    const formData = new FormData(form);
+    // 폼 데이터 수집
+    const mbtiType = document.getElementById('mbtiSelect').value;
+    const nickname = document.getElementById('nicknameInput').value;
+    const commentText = document.getElementById('commentText').value;
+    
     const commentData = {
-        resultId: formData.get('resultId'),
-        mbtiType: formData.get('mbtiType'),
-        nickname: formData.get('nickname'),
-        commentText: formData.get('commentText')
+        resultId: null, // 일반 커뮤니티 댓글은 resultId가 null
+        mbtiType: mbtiType,
+        nickname: nickname.trim() || null,
+        commentText: commentText.trim()
     };
+    
+    console.log('Sending comment data:', commentData); // 디버깅용
     
     // 유효성 검사
     if (!commentData.mbtiType) {
@@ -259,8 +383,13 @@ function submitComment() {
         return;
     }
     
-    if (!commentData.commentText || commentData.commentText.trim().length < 3) {
+    if (!commentData.commentText || commentData.commentText.length < 3) {
         showToast('댓글은 3자 이상 입력해주세요.', 'error');
+        return;
+    }
+    
+    if (commentData.commentText.length > 1000) {
+        showToast('댓글은 1000자를 초과할 수 없습니다.', 'error');
         return;
     }
     
@@ -273,8 +402,12 @@ function submitComment() {
         },
         body: JSON.stringify(commentData)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status); // 디버깅용
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data); // 디버깅용
         if (data.success) {
             showToast('댓글이 작성되었습니다! 💬');
             form.reset();

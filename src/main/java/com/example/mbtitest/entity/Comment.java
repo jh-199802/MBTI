@@ -23,13 +23,19 @@ public class Comment {
     private Long commentId;
     
     @Column(name = "RESULT_ID")
-    private Long resultId;
+    @Builder.Default
+    private Long resultId = -1L;  // NULL 대신 -1을 기본값으로 사용
+    
+    // 사용자 연관관계 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
     
     @Column(name = "MBTI_TYPE", length = 4, nullable = false)
     private String mbtiType;
     
     @Column(name = "NICKNAME", length = 50)
-    private String nickname;
+    private String nickname; // 익명 댓글용 (user가 null일 때 사용)
     
     @Column(name = "COMMENT_TEXT", nullable = false)
     @Lob
@@ -66,5 +72,21 @@ public class Comment {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+    
+    // 편의 메서드
+    public String getDisplayName() {
+        if (user != null) {
+            return user.getDisplayName();
+        }
+        return nickname != null ? nickname : "익명";
+    }
+    
+    public boolean isOwnedBy(User checkUser) {
+        return user != null && checkUser != null && user.getUserId().equals(checkUser.getUserId());
+    }
+    
+    public boolean isAnonymous() {
+        return user == null;
     }
 }

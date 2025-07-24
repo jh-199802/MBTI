@@ -6,6 +6,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🧠</text></svg>">
     <title>AI 성격 분석 테스트 - 메인</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/navigation.css">
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"></script>
 </head>
 <body>
@@ -35,7 +36,26 @@
                 </li>
             </ul>
             <!-- F-Pattern: CTA는 우측 상단 -->
-            <button class="btn-nav-primary" onclick="goToTest()">무료 테스트</button>
+            <div class="nav-user-section" id="navUserSection">
+                <!-- 로그인하지 않은 경우 -->
+                <div class="nav-guest" id="navGuest">
+                    <a href="/user/login" class="nav-link">로그인</a>
+                    <a href="/user/register" class="nav-link">회원가입</a>
+                    <button class="btn-nav-primary" onclick="goToTest()">무료 테스트</button>
+                </div>
+                <!-- 로그인한 경우 -->
+                <div class="nav-user" id="navUser" style="display: none;">
+                    <div class="user-info">
+                        <span class="user-greeting">안녕하세요, <span id="userNickname">사용자</span>님! 👋</span>
+                        <span class="user-mbti" id="userMbti"></span>
+                    </div>
+                    <div class="user-actions">
+                        <a href="/user/profile" class="nav-link">👤 마이페이지</a>
+                        <button class="btn-nav-secondary" onclick="goToTest()">테스트하기</button>
+                        <button class="btn-nav-logout" onclick="logout()">로그아웃</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -251,6 +271,81 @@
     </footer>
 
     <script>
+        // 페이지 로드 시 사용자 상태 확인
+        document.addEventListener('DOMContentLoaded', function() {
+            checkUserStatus();
+        });
+
+        // 사용자 로그인 상태 확인
+        async function checkUserStatus() {
+            try {
+                const response = await fetch('/user/api/current');
+                const data = await response.json();
+                
+                if (data.loggedIn) {
+                    showLoggedInUser(data.user);
+                } else {
+                    showGuestUser();
+                }
+            } catch (error) {
+                console.error('사용자 상태 확인 오류:', error);
+                showGuestUser();
+            }
+        }
+
+        // 로그인한 사용자 UI 표시
+        function showLoggedInUser(user) {
+            const navGuest = document.getElementById('navGuest');
+            const navUser = document.getElementById('navUser');
+            const userNickname = document.getElementById('userNickname');
+            const userMbti = document.getElementById('userMbti');
+            
+            navGuest.style.display = 'none';
+            navUser.style.display = 'flex';
+            
+            userNickname.textContent = user.nickname || user.username;
+            
+            if (user.mbtiType) {
+                userMbti.textContent = user.mbtiType;
+                userMbti.style.display = 'inline';
+            } else {
+                userMbti.style.display = 'none';
+            }
+        }
+
+        // 게스트 사용자 UI 표시
+        function showGuestUser() {
+            const navGuest = document.getElementById('navGuest');
+            const navUser = document.getElementById('navUser');
+            
+            navGuest.style.display = 'flex';
+            navUser.style.display = 'none';
+        }
+
+        // 로그아웃 함수
+        async function logout() {
+            try {
+                const response = await fetch('/user/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    showShareToast('로그아웃되었습니다. 👋');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showShareToast('로그아웃 중 오류가 발생했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('로그아웃 오류:', error);
+                showShareToast('로그아웃 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
         function goToTest() {
             // /test 페이지로 이동
             window.location.href = '/test';
@@ -273,6 +368,16 @@
                     });
                 }
             });
+        });
+
+        // 네비게이션 스크롤 효과
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
         });
 
         // 메인 페이지 공유 함수들

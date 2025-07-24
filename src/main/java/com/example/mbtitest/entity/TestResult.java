@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "TEST_RESULTS")
@@ -21,6 +22,11 @@ public class TestResult {
     @SequenceGenerator(name = "seq_test_result", sequenceName = "SEQ_TEST_RESULT", allocationSize = 1)
     @Column(name = "RESULT_ID")
     private Long resultId;
+    
+    // 사용자 연관관계 추가 (nullable - 익명 테스트 허용)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
     
     @Column(name = "USER_UUID", length = 36, nullable = false)
     private String userUuid;
@@ -77,6 +83,10 @@ public class TestResult {
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
     
+    // 연관관계 - 이 테스트 결과에 달린 댓글들
+    @OneToMany(mappedBy = "testResult", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
+    
     // Helper methods for boolean conversion
     public Boolean getIsPublic() {
         return "Y".equals(isPublicFlag);
@@ -88,6 +98,15 @@ public class TestResult {
     
     public void setPublic(boolean isPublic) {
         this.isPublicFlag = isPublic ? "Y" : "N";
+    }
+    
+    // 편의 메서드
+    public boolean isOwnedBy(User checkUser) {
+        return user != null && checkUser != null && user.getUserId().equals(checkUser.getUserId());
+    }
+    
+    public boolean isAnonymous() {
+        return user == null;
     }
     
     @PrePersist

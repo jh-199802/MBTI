@@ -1114,10 +1114,18 @@ ${questions.map((question, index) => `
 // 전역 변수로 선언하여 어디서든 접근 가능하게 함
 window.personalityTest = null;
 
-// 스크립트가 로드된 후 바로 초기화
-try {
-    window.personalityTest = new PersonalityTest();
-    console.log('PersonalityTest 초기화 성공');
-} catch (error) {
-    console.error('PersonalityTest 초기화 실패:', error);
-}
+// DOM 로드 완료 후 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        window.personalityTest = new PersonalityTest();
+        console.log('✅ PersonalityTest 초기화 성공');
+    } catch (error) {
+        console.error('❌ PersonalityTest 초기화 실패:', error);
+        // 에러가 발생해도 기본 기능은 작동하도록
+        window.personalityTest = {
+            testAPI: function() { alert('PersonalityTest 로드 실패'); },
+            testDBSave: function() { alert('PersonalityTest 로드 실패'); },
+            startTest: function() { alert('PersonalityTest 로드 실패'); }
+        };
+    }
+});

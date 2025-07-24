@@ -73,6 +73,71 @@
     color: white;
 }
 
+/* 사용자 섹션 스타일 */
+.nav-user-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-guest {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.user-greeting {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.user-mbti {
+    font-size: 0.8rem;
+    color: #4ECDC4;
+    font-weight: 600;
+    padding: 2px 8px;
+    background: rgba(78, 205, 196, 0.1);
+    border-radius: 12px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-nav-logout {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.btn-nav-logout:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
 .dropdown-icon {
     font-size: 0.8rem;
     transition: transform 0.3s ease;
@@ -183,8 +248,40 @@
         padding: 0 15px;
     }
     
-    .btn-nav-primary, .btn-nav-secondary {
-        padding: 8px 16px;
+    .nav-user-section {
+        gap: 10px;
+    }
+    
+    .nav-guest {
+        gap: 10px;
+    }
+    
+    .user-info {
+        display: none; /* 모바일에서는 인사말 숨김 */
+    }
+    
+    .user-actions {
+        gap: 8px;
+    }
+    
+    .btn-nav-primary, .btn-nav-secondary, .btn-nav-logout {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-guest .nav-link {
+        padding: 6px 10px;
         font-size: 0.85rem;
+    }
+    
+    .user-greeting {
+        font-size: 0.8rem;
+    }
+    
+    .user-mbti {
+        font-size: 0.75rem;
+        padding: 1px 6px;
     }
 }

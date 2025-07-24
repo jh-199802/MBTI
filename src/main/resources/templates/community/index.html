@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${pageTitle}">MBTI 커뮤니티</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/community.css}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </head>
@@ -61,9 +62,11 @@
                 <!-- 사이드바 -->
                 <aside class="community-sidebar">
                     <!-- 댓글 작성 폼 -->
-                    <div class="write-section">
+                    <div class="write-section comment-form-section">
                         <h3><i class="fas fa-pen"></i> 댓글 작성하기</h3>
-                        <form id="commentForm" class="comment-form">
+                        
+                        <!-- 로그인한 사용자용 댓글 폼 (JavaScript로 제어) -->
+                        <form id="commentForm" class="comment-form" style="display: none;">
                             <div class="form-group">
                                 <label for="mbtiSelect">내 MBTI</label>
                                 <select id="mbtiSelect" name="mbtiType" required>
@@ -89,6 +92,8 @@
                                 <i class="fas fa-paper-plane"></i> 댓글 작성
                             </button>
                         </form>
+                        
+                        <!-- 로그인 프롬프트는 JavaScript에서 동적으로 생성됨 -->
                     </div>
 
                     <!-- 인기 댓글 -->
@@ -223,8 +228,6 @@
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', function() {
             initializeCommunityPage();
-            setupCommentForm();
-            setupCharCounter();
         });
     </script>
 </body>
