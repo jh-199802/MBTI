@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🧠</text></svg>">
+    <title>로그인 - PersonaAI</title>
+    <link rel="stylesheet" type="text/css" href="/css/user.css">
+    <link rel="stylesheet" type="text/css" href="/css/navigation.css">
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🧠</span>
+                <span class="logo-text">PersonaAI</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/main" class="nav-link">홈</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/test" class="nav-link">테스트</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/statistics" class="nav-link">📊 통계</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/comments" class="nav-link">💬 커뮤니티</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link">소개</a>
+                </li>
+            </ul>
+            <div class="nav-user-section">
+                <div class="nav-guest">
+                    <a href="/user/register" class="nav-link">회원가입</a>
+                    <button class="btn-nav-primary" onclick="goToTest()">무료 테스트</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-form-wrapper">
+            <div class="auth-header">
+                <h1 class="auth-title">🔐 로그인</h1>
+                <p class="auth-subtitle">PersonaAI에 오신 것을 환영합니다!</p>
+            </div>
+
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="loginId" class="form-label">아이디 또는 이메일</label>
+                    <input type="text" id="loginId" name="loginId" class="form-input" 
+                           placeholder="아이디 또는 이메일을 입력하세요" required>
+                    <div class="form-error" id="loginIdError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input type="password" id="password" name="password" class="form-input" 
+                           placeholder="비밀번호를 입력하세요" required>
+                    <div class="form-error" id="passwordError"></div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        로그인 상태 유지
+                    </label>
+                    <a href="/user/forgot-password" class="forgot-link">비밀번호 찾기</a>
+                </div>
+
+                <button type="submit" class="auth-btn auth-btn-primary" id="loginBtn">
+                    <span class="btn-text">로그인</span>
+                    <span class="btn-loading" style="display: none;">로그인 중...</span>
+                </button>
+
+                <div class="form-message" id="loginMessage"></div>
+            </form>
+
+            <div class="auth-divider">
+                <span>또는</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn kakao-btn" onclick="socialLogin('kakao')">
+                    <span class="social-icon">💬</span>
+                    카카오로 로그인
+                </button>
+                <button class="social-btn google-btn" onclick="socialLogin('google')">
+                    <span class="social-icon">🔍</span>
+                    구글로 로그인
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                <p>아직 계정이 없으신가요? <a href="/user/register" class="auth-link">회원가입</a></p>
+            </div>
+        </div>
+
+        <!-- 배경 장식 -->
+        <div class="auth-bg-decoration">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 리다이렉트 URL 처리
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get('redirectUrl') || '/main';
+
+        // 로그인 폼 제출 처리
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loginId = document.getElementById('loginId').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // 유효성 검사
+            if (!loginId) {
+                showFieldError('loginId', '아이디 또는 이메일을 입력해주세요.');
+                return;
+            }
+            
+            if (!password) {
+                showFieldError('password', '비밀번호를 입력해주세요.');
+                return;
+            }
+            
+            // 기존 에러 메시지 초기화
+            clearErrors();
+            
+            // 로딩 상태 표시
+            setLoading(true);
+            
+            try {
+                const response = await fetch('/user/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        loginId: loginId,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = redirectUrl;
+                    }, 1500);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                showMessage('로그인 중 오류가 발생했습니다.', 'error');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // 필드별 에러 메시지 표시
+        function showFieldError(fieldName, message) {
+            const errorElement = document.getElementById(fieldName + 'Error');
+            const inputElement = document.getElementById(fieldName);
+            
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            inputElement.classList.add('error');
+        }
+
+        // 메시지 표시
+        function showMessage(message, type = 'info') {
+            const messageElement = document.getElementById('loginMessage');
+            messageElement.textContent = message;
+            messageElement.className = `form-message ${type}`;
+            messageElement.style.display = 'block';
+        }
+
+        // 에러 초기화
+        function clearErrors() {
+            document.querySelectorAll('.form-error').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+            
+            document.querySelectorAll('.form-input').forEach(el => {
+                el.classList.remove('error');
+            });
+            
+            document.getElementById('loginMessage').style.display = 'none';
+        }
+
+        // 로딩 상태 설정
+        function setLoading(isLoading) {
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = loginBtn.querySelector('.btn-text');
+            const btnLoading = loginBtn.querySelector('.btn-loading');
+            
+            if (isLoading) {
+                loginBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline';
+                loginBtn.classList.add('loading');
+            } else {
+                loginBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                loginBtn.classList.remove('loading');
+            }
+        }
+
+        // 소셜 로그인 (추후 구현)
+        function socialLogin(provider) {
+            alert(`${provider} 로그인은 추후 구현 예정입니다.`);
+        }
+
+        // 테스트 페이지로 이동
+        function goToTest() {
+            window.location.href = '/test';
+        }
+
+        // 입력 필드 포커스 시 에러 상태 제거
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.classList.remove('error');
+                const errorElement = document.getElementById(this.id + 'Error');
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            });
+        });
+
+        // Enter 키로 로그인
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+-- COMMENTS 테이블의 RESULT_ID 컬럼을 NULL 허용으로 변경
+-- 커뮤니티 댓글은 특정 테스트 결과와 연결되지 않을 수 있음
+
+-- RESULT_ID 컬럼을 NULL 허용으로 변경
+ALTER TABLE COMMENTS MODIFY RESULT_ID NUMBER(10) NULL;
+
+-- 외래키 제약조건 확인 (이미 존재한다면 유지)
+-- FK_COMMENT_RESULT 제약조건이 있는지 확인
+SELECT CONSTRAINT_NAME, CONSTRAINT_TYPE, SEARCH_CONDITION 
+FROM USER_CONSTRAINTS 
+WHERE TABLE_NAME = 'COMMENTS' AND CONSTRAINT_TYPE = 'R';
+
+-- 변경사항 커밋
+COMMIT;
+
+-- 테이블 구조 확인
+DESC COMMENTS;

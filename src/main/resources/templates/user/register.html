@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">회원가입 - MBTI 테스트</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/user.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <h1><a th:href="@{/}" class="logo"><i class="fas fa-brain"></i> MBTI 테스트</a></h1>
+                <nav class="main-nav">
+                    <a th:href="@{/}" class="nav-link">
+                        <i class="fas fa-home"></i> 메인
+                    </a>
+                    <a th:href="@{/test}" class="nav-link">
+                        <i class="fas fa-clipboard-check"></i> 테스트
+                    </a>
+                    <a th:href="@{/comments}" class="nav-link">
+                        <i class="fas fa-comments"></i> 커뮤니티
+                    </a>
+                    <a th:href="@{/user/login}" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i> 로그인
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="register-main">
+            <div class="register-container">
+                <div class="register-header">
+                    <h1><i class="fas fa-user-plus"></i> 회원가입</h1>
+                    <p>MBTI 테스트와 함께 나만의 성격 여정을 시작하세요! 🚀</p>
+                </div>
+
+                <form id="registerForm" class="register-form">
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i> 사용자명
+                        </label>
+                        <input type="text" id="username" name="username" required 
+                               placeholder="4-20자의 영문, 숫자, 언더스코어" 
+                               minlength="4" maxlength="20" 
+                               pattern="^[a-zA-Z0-9_]{4,20}$">
+                        <div class="validation-message" id="usernameValidation"></div>
+                        <div class="input-help">영문, 숫자, 언더스코어(_)만 사용 가능</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> 이메일
+                        </label>
+                        <input type="email" id="email" name="email" required 
+                               placeholder="your@email.com">
+                        <div class="validation-message" id="emailValidation"></div>
+                        <div class="input-help">로그인 ID로 사용됩니다</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i> 비밀번호
+                        </label>
+                        <input type="password" id="password" name="password" required 
+                               placeholder="8자 이상, 영문/숫자/특수문자 중 2가지 이상" 
+                               minlength="8" maxlength="50">
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <span class="strength-text" id="strengthText">비밀번호를 입력하세요</span>
+                        </div>
+                        <div class="validation-message" id="passwordValidation"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">
+                            <i class="fas fa-lock"></i> 비밀번호 확인
+                        </label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required 
+                               placeholder="비밀번호를 다시 입력하세요">
+                        <div class="validation-message" id="confirmPasswordValidation"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nickname">
+                            <i class="fas fa-id-badge"></i> 닉네임 (선택사항)
+                        </label>
+                        <input type="text" id="nickname" name="nickname" 
+                               placeholder="커뮤니티에서 사용할 닉네임" 
+                               maxlength="20">
+                        <div class="input-help">비워두면 사용자명이 표시됩니다</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreeTerms" required>
+                                <span class="checkmark"></span>
+                                <a href="/terms" target="_blank">이용약관</a>에 동의합니다 (필수)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreePrivacy" required>
+                                <span class="checkmark"></span>
+                                <a href="/privacy" target="_blank">개인정보처리방침</a>에 동의합니다 (필수)
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="register-btn" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> 회원가입
+                    </button>
+                </form>
+
+                <div class="register-footer">
+                    <p>이미 계정이 있으신가요? <a th:href="@{/user/login}">로그인하기</a></p>
+                </div>
+            </div>
+        </main>
+
+        <!-- 푸터 -->
+        <footer class="footer">
+            <p>&copy; 2024 MBTI 테스트. 함께 성장하는 커뮤니티! 💝</p>
+        </footer>
+    </div>
+
+    <!-- 토스트 메시지 -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">메시지</span>
+        </div>
+    </div>
+
+    <!-- 로딩 스피너 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>처리 중...</p>
+        </div>
+    </div>
+
+    <script th:src="@{/js/user-register.js}"></script>
+</body>
+</html>
