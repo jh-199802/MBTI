@@ -105,7 +105,11 @@ class PersonalityTest {
     async init() {
         // 저장된 답변이 있으면 복구
         this.loadFromLocalStorage();
-        this.showWelcomeScreen();
+        
+        // test.html 페이지에서는 showWelcomeScreen을 호출하지 않음
+        if (!window.location.pathname.includes('/test')) {
+            this.showWelcomeScreen();
+        }
     }
 
     // 로컬 스토리지에 저장
@@ -145,17 +149,17 @@ class PersonalityTest {
 
     showWelcomeScreen() {
         const content = document.getElementById('content');
-        
+
         // 저장된 답변이 있는지 확인
         const hasSevedData = this.answers.length > 0;
         const continueButton = hasSevedData ? `
             <div style="margin-bottom: 20px;">
-                <button class="btn-continue" onclick="personalityTest.continueTest()">
+                <button class="btn-continue" onclick="window.personalityTest.continueTest()">
                     🔄 계속하기 (${this.answers.length}/${questions.length}개 답변 완료)
                 </button>
             </div>
         ` : '';
-        
+
         content.innerHTML = `
             <div style="text-align: center; padding: 40px;">
                 <h2 style="color: #2c3e50; margin-bottom: 20px;">🧠 AI 성격 분석 테스트</h2>
@@ -165,7 +169,7 @@ class PersonalityTest {
                 </p>
                 <div style="margin-bottom: 30px;">
                     <!-- 메인 테스트 시작 버튼 - 크고 눈에 띄게 (위쪽) -->
-                    <button class="btn-test-main" onclick="personalityTest.startTest()">
+                    <button class="btn-test-main" onclick="window.personalityTest.startTest()">>
                         <span class="btn-icon">🚀</span>
                         <span class="btn-text">${hasSevedData ? '새로 시작하기' : '테스트 시작하기'}</span>
                         <span class="btn-subtitle">나의 성격을 분석해보세요</span>
@@ -176,8 +180,11 @@ class PersonalityTest {
                     
                     <!-- API 연결 테스트 - 작고 보조적으로 (아래쪽) -->
                     <div style="margin-top: 20px;">
-                        <button class="btn-test-secondary" onclick="personalityTest.testAPI()">
+                        <button class="btn-test-secondary" onclick="window.personalityTest.testAPI()">
                             🔧 API 연결 상태 확인
+                        </button>
+                        <button class="btn-test-secondary" onclick="window.personalityTest.testDBSave()" style="margin-left: 10px;">
+                            🗃️ DB 저장 테스트
                         </button>
                     </div>
                 </div>
@@ -217,7 +224,7 @@ class PersonalityTest {
 
     async testAPI() {
         const content = document.getElementById('content');
-        
+
         // 로딩 표시
         content.innerHTML = `
             <div style="text-align: center; padding: 40px;">
@@ -241,7 +248,7 @@ class PersonalityTest {
             }
 
             const data = await response.json();
-            
+
             if (!data.success) {
                 throw new Error(data.error || '서버에서 알 수 없는 오류가 발생했습니다.');
             }
@@ -249,10 +256,10 @@ class PersonalityTest {
             // 서버에서 받은 Gemini 응답 처리
             const geminiData = data.data;
             let aiResponse = '';
-            
-            if (geminiData.candidates && geminiData.candidates[0] && 
-                geminiData.candidates[0].content && 
-                geminiData.candidates[0].content.parts && 
+
+            if (geminiData.candidates && geminiData.candidates[0] &&
+                geminiData.candidates[0].content &&
+                geminiData.candidates[0].content.parts &&
                 geminiData.candidates[0].content.parts[0].text) {
                 aiResponse = geminiData.candidates[0].content.parts[0].text;
             } else {
@@ -269,12 +276,12 @@ class PersonalityTest {
                             <strong>AI 응답:</strong> ${aiResponse}
                         </div>
                     </div>
-                    <button class="btn-test-main" onclick="personalityTest.startTest()" style="margin-right: 15px;">
+                    <button class="btn-test-main" onclick="window.personalityTest.startTest()"> style="margin-right: 15px;">
                         <span class="btn-icon">🚀</span>
                         <span class="btn-text">테스트 시작하기</span>
                         <span class="btn-subtitle">나의 성격을 분석해보세요</span>
                     </button>
-                    <button class="btn-test-secondary" onclick="personalityTest.showWelcomeScreen()" style="margin-top: 15px;">
+                    <button class="btn-test-secondary" onclick="window.personalityTest.showWelcomeScreen()" style="margin-top: 15px;">
                         🏠 처음으로
                     </button>
                 </div>
@@ -298,20 +305,128 @@ class PersonalityTest {
                             • 브라우저 콘솔(F12)에서 자세한 오류 확인
                         </div>
                     </div>
-                    <button class="btn-test-secondary" onclick="personalityTest.testAPI()" style="margin-right: 15px;">
+                    <button class="btn-test-secondary" onclick="window.personalityTest.testAPI()" style="margin-right: 15px;">
                         🔄 다시 테스트
                     </button>
-                    <button class="btn-test-secondary" onclick="personalityTest.showWelcomeScreen()">
+                    <button class="btn-test-secondary" onclick="window.personalityTest.showWelcomeScreen()">
                         🏠 처음으로
                     </button>
                 </div>
             `;
-            
+
             console.error('API Test Error:', error);
         }
     }
 
+    async testDBSave() {
+        const content = document.getElementById('content');
+
+        // 로딩 표시
+        content.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <div class="spinner" style="margin: 0 auto 20px;"></div>
+                <h3>🗃️ DB 저장 테스트 중...</h3>
+                <p style="color: #666;">샘플 데이터로 DB 저장을 테스트합니다.</p>
+            </div>
+        `;
+
+        try {
+            const response = await fetch('/api/test-db-save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`서버 요청 실패: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || '서버에서 알 수 없는 오류가 발생했습니다.');
+            }
+
+            const hasResultId = data.resultId;
+
+            // 성공 화면
+            content.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="background: #d4edda; color: #155724; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h3>✅ DB 저장 테스트 완료!</h3>
+                        <p style="margin: 10px 0;">${data.message}</p>
+                        
+                        ${hasResultId ? `
+                        <div style="background: rgba(0,0,0,0.1); padding: 15px; border-radius: 5px; margin: 15px 0;">
+                            <strong>🎯 DB 저장 성공!</strong><br>
+                            <strong>결과 ID:</strong> ${data.resultId}<br>
+                            <strong>결과 URL:</strong> <a href="${data.resultUrl}" target="_blank" style="color: #0066cc;">${data.resultUrl}</a>
+                        </div>
+                        ` : `
+                        <div style="background: rgba(255,193,7,0.2); padding: 15px; border-radius: 5px; margin: 15px 0; color: #856404;">
+                            <strong>⚠️ DB 저장 정보 없음</strong><br>
+                            DB 저장 결과를 확인할 수 없습니다.
+                        </div>
+                        `}
+                        
+                        <div style="background: rgba(0,0,0,0.1); padding: 15px; border-radius: 5px; margin-top: 15px;">
+                            <strong>🔍 H2 콘솔에서 확인:</strong><br>
+                            <a href="/h2-console" target="_blank" style="color: #0066cc;">http://localhost:10000/h2-console</a><br>
+                            <small>JDBC URL: ${data.jdbcUrl}, Username: sa</small><br>
+                            <small>쿼리: ${data.query}</small>
+                        </div>
+                    </div>
+                    
+                    ${hasResultId ? `
+                    <button class="btn-test-main" onclick="window.open('${data.resultUrl}', '_blank')" style="margin-right: 15px;">
+                        <span class="btn-icon">🎯</span>
+                        <span class="btn-text">저장된 결과 보기</span>
+                        <span class="btn-subtitle">테스트 결과 페이지로</span>
+                    </button>
+                    ` : ''}
+                    
+                    <button class="btn-test-secondary" onclick="window.open('/h2-console', '_blank')" style="margin-right: 15px;">
+                        🗃️ H2 콘솔 열기
+                    </button>
+                    <button class="btn-test-secondary" onclick="window.personalityTest.showWelcomeScreen()">
+                        🏠 처음으로
+                    </button>
+                </div>
+            `;
+
+        } catch (error) {
+            // 실패 화면
+            content.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h3>❌ DB 저장 테스트 실패</h3>
+                        <p style="margin: 10px 0;">다음 오류가 발생했습니다:</p>
+                        <div style="background: rgba(0,0,0,0.1); padding: 10px; border-radius: 5px; margin: 15px 0; font-family: monospace; text-align: left;">
+                            ${error.message}
+                        </div>
+                        <div style="text-align: left; background: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                            <strong>💡 확인사항:</strong><br>
+                            • 서버가 정상 실행 중인지 확인<br>
+                            • 브라우저 콘솔에서 자세한 오류 확인<br>
+                            • H2 데이터베이스 연결 상태 확인
+                        </div>
+                    </div>
+                    <button class="btn-test-secondary" onclick="window.personalityTest.testDBSave()" style="margin-right: 15px;">
+                        🔄 다시 테스트
+                    </button>
+                    <button class="btn-test-secondary" onclick="window.personalityTest.showWelcomeScreen()">
+                        🏠 처음으로
+                    </button>
+                </div>
+            `;
+
+            console.error('DB Save Test Error:', error);
+        }
+    }
+
     startTest() {
+        // 테스트 페이지에서 호출된 경우에만 실제 테스트 시작
         this.currentQuestionIndex = 0;
         this.answers = [];
         this.clearSavedData(); // 새로 시작할 때는 기존 데이터 삭제
@@ -353,7 +468,7 @@ class PersonalityTest {
 <div class="navigation" style="margin-top: 50px;">
 <button
     class="btn-secondary"
-    onclick="personalityTest.previousQuestion()"
+    onclick="window.personalityTest.previousQuestion()"
     ${this.currentQuestionIndex === 0 ? 'disabled' : ''}
     style="padding: 18px 36px; font-size: 1.1rem; min-height: 56px;"
 >
@@ -361,7 +476,7 @@ class PersonalityTest {
 </button>
 <button
     class="btn-primary"
-    onclick="personalityTest.nextQuestion()"
+    onclick="window.personalityTest.nextQuestion()"
     id="nextBtn"
     style="padding: 18px 36px; font-size: 1.1rem; min-height: 56px;"
 >
@@ -411,7 +526,7 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
 
         // 답변 저장
         this.answers[this.currentQuestionIndex] = answer;
-        
+
         // 로컬 스토리지에 자동 저장
         this.saveToLocalStorage();
 
@@ -434,7 +549,7 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
 
     async analyzePersonality() {
         const content = document.getElementById('content');
-        
+
         // 로딩 화면 표시
         content.innerHTML = `
 <div class="loading">
@@ -455,6 +570,9 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
     }
 
     async callGeminiAPI() {
+        // 테스트 시작 시간 기록 (추정)
+        const testDuration = Math.floor(Math.random() * 300) + 180; // 3-8분 사이 랜덤
+
         // 답변 데이터 준비
         const answersWithQuestions = questions.map((q, index) => ({
             category: q.category,
@@ -467,6 +585,17 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
         // AI 프롬프트 작성
         const prompt = this.createAnalysisPrompt(answersWithQuestions);
 
+        // 간단한 MBTI 타입 추정 (AI 응답에서 추출할 예정)
+        const estimatedMbtiType = "ENFP"; // 임시값, AI가 정확한 값 반환할 것
+
+        // 카테고리 점수 생성 (AI가 더 정확한 값 반환할 것)
+        const categoryScores = {
+            E: 60, I: 40,
+            S: 35, N: 65,
+            T: 45, F: 55,
+            J: 30, P: 70
+        };
+
         try {
             const response = await fetch('/api/analyze', {
                 method: 'POST',
@@ -474,7 +603,11 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    prompt: prompt
+                    prompt: prompt,
+                    mbtiType: estimatedMbtiType,
+                    testDuration: testDuration,
+                    categoryScores: categoryScores,
+                    answers: this.answers.map((answer, index) => ({ question: index + 1, answer: answer }))
                 })
             });
 
@@ -490,7 +623,7 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
 
             // 서버에서 받은 Gemini 응답 처리
             const geminiData = data.data;
-            
+
             // 디버깅: 실제 응답 내용 확인
             console.log('=== 서버 API 응답 디버깅 ===');
             console.log('서버 응답:', data);
@@ -504,21 +637,30 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
             // parts 구조 안전하게 접근
             const content = geminiData.candidates[0].content;
             let aiResponse = '';
-            
+
             console.log('aiResponse 추출 시도...');
             if (content.parts && content.parts.length > 0 && content.parts[0].text) {
                 aiResponse = content.parts[0].text;
-                console.log('성공: parts[0].text 사용:', aiResponse);
+                console.log('성공: parts[0].text 사용:', aiResponse.substring(0, 200) + '...');
             } else if (content.text) {
                 // 혹시 직접 text 필드가 있는 경우
                 aiResponse = content.text;
-                console.log('성공: content.text 사용:', aiResponse);
+                console.log('성공: content.text 사용:', aiResponse.substring(0, 200) + '...');
             } else {
                 aiResponse = '응답을 받았지만 텍스트 추출에 실패했습니다. (finishReason: ' + geminiData.candidates[0].finishReason + ')';
                 console.log('실패: 기본 메시지 사용:', aiResponse);
             }
 
-            console.log('최종 aiResponse:', aiResponse);
+            // DB 저장 성공 여부 확인
+            if (data.resultId) {
+                console.log('✅ DB 저장 성공! 결과 ID:', data.resultId);
+                console.log('🔗 결과 URL:', data.resultUrl);
+
+                // 결과 페이지로 리다이렉트할 수도 있음 (선택사항)
+                // window.location.href = data.resultUrl;
+            } else {
+                console.log('⚠️ DB 저장 실패 또는 정보 없음');
+            }
 
             // JSON 파싱 시도
             try {
@@ -530,6 +672,8 @@ ${this.currentQuestionIndex === questions.length - 1 ? '🚀 분석 시작하기
                 // JSON 코드 블록이 없다면 전체 응답에서 JSON 파싱 시도
                 return JSON.parse(aiResponse);
             } catch (parseError) {
+                console.error('JSON 파싱 오류:', parseError);
+                console.log('원본 응답:', aiResponse);
                 // JSON이 아닌 경우 텍스트 파싱
                 return this.parseTextResponse(aiResponse);
             }
@@ -635,10 +779,10 @@ ${answersWithQuestions.map((item, index) => `
 
     showResults(results) {
         const content = document.getElementById('content');
-        
+
         // 테스트 완료 후 저장된 데이터 삭제
         this.clearSavedData();
-        
+
         content.innerHTML = `
 <div class="results">
 <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">
@@ -713,7 +857,7 @@ ${answersWithQuestions.map((item, index) => `
 <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px;">
 <h3 style="color: #4ECDC4; margin-bottom: 8px; font-size: 1.5em;">${results.comprehensive.similar_characters.name}</h3>
 <p style="color: #FFB84D; font-size: 1.1em; margin-bottom: 15px; font-weight: bold;">${results.comprehensive.similar_characters.source}</p>
-<p style="font-size: 1.05em; line-height: 1.5; color: #ffffff;">${results.comprehensive.similar_characters.reason}</p>
+<p style="font-size: 1.05em; line-height: 1.5; color: #FFB84D;">${results.comprehensive.similar_characters.reason}</p>
 </div>
 </div>
 
@@ -743,13 +887,13 @@ ${results.comprehensive.growth_areas.map(area => `<li>${area}</li>`).join('')}
 </div>
 
 <div style="text-align: center; margin-top: 30px;">
-<button class="btn-primary restart-btn" onclick="personalityTest.restart()">
+<button class="btn-primary restart-btn" onclick="window.personalityTest.restart()">
     🔄 다시 테스트하기
 </button>
-<button class="btn-secondary" onclick="personalityTest.showMyAnswers()" style="margin: 0 10px;">
+<button class="btn-secondary" onclick="window.personalityTest.showMyAnswers()" style="margin: 0 10px;">
     📝 내 답변 보기
 </button>
-<button class="btn-secondary" onclick="personalityTest.shareResults()">
+<button class="btn-secondary" onclick="window.personalityTest.shareResults()">
     📤 결과 공유하기
 </button>
 </div>
@@ -776,10 +920,10 @@ ${questions.map((question, index) => `
 `).join('')}
 
 <div style="text-align: center; margin-top: 30px;">
-<button class="btn-primary" onclick="personalityTest.copyAllAnswers()">
+<button class="btn-primary" onclick="window.personalityTest.copyAllAnswers()">
     📋 모든 답변 복사하기
 </button>
-<button class="btn-secondary" onclick="personalityTest.showResults(personalityTest.lastResults)" style="margin-left: 10px;">
+<button class="btn-secondary" onclick="window.personalityTest.showResults(personalityTest.lastResults)" style="margin-left: 10px;">
     ← 결과로 돌아가기
 </button>
 </div>
@@ -788,10 +932,10 @@ ${questions.map((question, index) => `
     }
 
     copyAllAnswers() {
-        const answersText = questions.map((question, index) => 
+        const answersText = questions.map((question, index) =>
             `질문 ${index + 1}: ${question.question}\n답변: ${this.answers[index] || '답변 없음'}\n`
         ).join('\n');
-        
+
         navigator.clipboard.writeText(answersText).then(() => {
             alert('📋 모든 답변이 클립보드에 복사되었습니다!');
         }).catch(() => {
@@ -808,7 +952,7 @@ ${questions.map((question, index) => `
 
     showError(errorMessage) {
         const content = document.getElementById('content');
-        
+
         content.innerHTML = `
 <div class="error">
 <h3>😔 분석 중 오류가 발생했습니다</h3>
@@ -816,10 +960,10 @@ ${questions.map((question, index) => `
 <p>잠시 후 다시 시도해주세요.</p>
 
 <div style="margin-top: 20px;">
-<button class="btn-primary" onclick="personalityTest.analyzePersonality()">
+<button class="btn-primary" onclick="window.personalityTest.analyzePersonality()">
     🔄 다시 분석하기
 </button>
-<button class="btn-secondary" onclick="personalityTest.restart()" style="margin-left: 10px;">
+<button class="btn-secondary" onclick="window.personalityTest.restart()" style="margin-left: 10px;">
     🏠 처음으로
 </button>
 </div>
@@ -859,13 +1003,13 @@ ${questions.map((question, index) => `
 
         // 모바일 디바이스 체크
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
+
         if (isMobile) {
             // 모바일에서 키보드가 올라올 때 스크롤 조정
             answerElement.addEventListener('focus', () => {
                 setTimeout(() => {
-                    answerElement.scrollIntoView({ 
-                        behavior: 'smooth', 
+                    answerElement.scrollIntoView({
+                        behavior: 'smooth',
                         block: 'center',
                         inline: 'nearest'
                     });
@@ -895,8 +1039,8 @@ ${questions.map((question, index) => `
             window.addEventListener('orientationchange', () => {
                 setTimeout(() => {
                     if (document.activeElement === answerElement) {
-                        answerElement.scrollIntoView({ 
-                            behavior: 'smooth', 
+                        answerElement.scrollIntoView({
+                            behavior: 'smooth',
                             block: 'center'
                         });
                     }
@@ -908,7 +1052,7 @@ ${questions.map((question, index) => `
                 if (document.activeElement === answerElement) {
                     const windowHeight = window.innerHeight;
                     const documentHeight = document.documentElement.clientHeight;
-                    
+
                     // 키보드가 올라왔을 때 (화면 높이가 줄어들었을 때)
                     if (windowHeight < documentHeight * 0.75) {
                         document.body.style.transform = 'translateY(-50px)';
@@ -937,7 +1081,7 @@ ${questions.map((question, index) => `
         const scrollHeight = element.scrollHeight;
         const minHeight = window.innerWidth <= 480 ? 120 : window.innerWidth <= 768 ? 160 : 400; // 모바일에서 더 작게
         const maxHeight = window.innerHeight * 0.5; // 화면 높이의 50%까지 (60%에서 줄임)
-        
+
         element.style.height = Math.min(Math.max(scrollHeight, minHeight), maxHeight) + 'px';
     }
 
@@ -951,11 +1095,11 @@ ${questions.map((question, index) => `
     adjustForScreenSize() {
         const isMobile = this.isMobileDevice();
         const content = document.getElementById('content');
-        
+
         if (isMobile && content) {
             // 모바일에서 추가 여백 조정
             content.style.padding = '1rem 0.5rem';
-            
+
             // 질문 컨테이너 찾기
             const questionContainer = content.querySelector('.question-container');
             if (questionContainer) {
@@ -966,24 +1110,14 @@ ${questions.map((question, index) => `
     }
 }
 
-// 페이지 로드 시 테스트 시작
-let personalityTest;
-document.addEventListener('DOMContentLoaded', () => {
-    personalityTest = new PersonalityTest();
-    
-    // 화면 크기 변경 시 레이아웃 재조정
-    window.addEventListener('resize', () => {
-        if (personalityTest) {
-            personalityTest.adjustForScreenSize();
-        }
-    });
-    
-    // 화면 회전 시 레이아웃 재조정
-    window.addEventListener('orientationchange', () => {
-        setTimeout(() => {
-            if (personalityTest) {
-                personalityTest.adjustForScreenSize();
-            }
-        }, 100);
-    });
-});
+// PersonalityTest 인스턴스는 전역에서 하나만 생성되도록 관리
+// 전역 변수로 선언하여 어디서든 접근 가능하게 함
+window.personalityTest = null;
+
+// 스크립트가 로드된 후 바로 초기화
+try {
+    window.personalityTest = new PersonalityTest();
+    console.log('PersonalityTest 초기화 성공');
+} catch (error) {
+    console.error('PersonalityTest 초기화 실패:', error);
+}

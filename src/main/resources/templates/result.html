@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">MBTI 테스트 결과</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/result.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"></script>
+    
+    <!-- Open Graph Meta Tags for SNS Sharing -->
+    <meta property="og:title" th:content="'[MBTI 테스트 결과] 나는 ' + ${mbtiType} + '!'">
+    <meta property="og:description" content="정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥">
+    <meta property="og:image" th:content="@{'/images/mbti-' + ${#strings.toLowerCase(mbtiType)} + '.jpg'}">
+    <meta property="og:url" th:content="@{'/result/' + ${resultId}}">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" th:content="'[MBTI 테스트 결과] 나는 ' + ${mbtiType} + '!'">
+    <meta name="twitter:description" content="정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥">
+    <meta name="twitter:image" th:content="@{'/images/mbti-' + ${#strings.toLowerCase(mbtiType)} + '.jpg'}">
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-trophy"></i> 테스트 결과</h1>
+                <nav class="main-nav">
+                    <a th:href="@{/}" class="nav-link">
+                        <i class="fas fa-home"></i> 메인
+                    </a>
+                    <a th:href="@{/test}" class="nav-link">
+                        <i class="fas fa-redo"></i> 다시 테스트
+                    </a>
+                    <a th:href="@{/comments}" class="nav-link">
+                        <i class="fas fa-comments"></i> 커뮤니티
+                    </a>
+                    <a th:href="@{/statistics}" class="nav-link">
+                        <i class="fas fa-chart-line"></i> 통계
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="result-main">
+            <!-- 결과 카드 -->
+            <section class="result-card">
+                <div class="result-header">
+                    <div class="mbti-badge-large" th:data-mbti="${mbtiType}">
+                        <span class="mbti-text" th:text="${mbtiType}">ENFP</span>
+                    </div>
+                    <div class="result-title">
+                        <h2 th:text="${mbtiInfo?.name ?: '알 수 없음'}">재기발랄한 활동가</h2>
+                        <p th:text="${mbtiInfo?.description ?: '설명이 없습니다.'}">열정적이고 창의적인 성격으로 항상 새로운 가능성을 보는 사람</p>
+                    </div>
+                </div>
+
+                <!-- 공유 버튼들 -->
+                <div class="share-section">
+                    <h3><i class="fas fa-share-alt"></i> 결과 공유하기</h3>
+                    <div class="share-buttons">
+                        <button class="share-btn kakao" onclick="shareToKakao()" title="카카오톡 공유">
+                            <i class="fas fa-comment"></i>
+                            <span>카카오톡</span>
+                        </button>
+                        <button class="share-btn facebook" onclick="shareToFacebook()" title="페이스북 공유">
+                            <i class="fab fa-facebook-f"></i>
+                            <span>페이스북</span>
+                        </button>
+                        <button class="share-btn twitter" onclick="shareToTwitter()" title="트위터 공유">
+                            <i class="fab fa-twitter"></i>
+                            <span>트위터</span>
+                        </button>
+                        <button class="share-btn instagram" onclick="shareToInstagram()" title="인스타그램 스토리">
+                            <i class="fab fa-instagram"></i>
+                            <span>인스타그램</span>
+                        </button>
+                        <button class="share-btn link" onclick="copyLink()" title="링크 복사">
+                            <i class="fas fa-link"></i>
+                            <span>링크 복사</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 카테고리 점수 -->
+                <div class="scores-section" th:if="${categoryScores}">
+                    <h3><i class="fas fa-chart-bar"></i> 성격 점수</h3>
+                    <div class="score-grid">
+                        <div th:each="entry : ${categoryScores}" class="score-item">
+                            <div class="score-label" th:text="${entry.key}">카테고리</div>
+                            <div class="score-bar">
+                                <div class="score-fill" th:style="'width: ' + ${entry.value} + '%'"></div>
+                            </div>
+                            <div class="score-value" th:text="${entry.value} + '%'">75%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MBTI 타입 상세 정보 -->
+                <div class="mbti-details" th:if="${mbtiInfo}">
+                    <div class="detail-grid">
+                        <div class="detail-card strengths">
+                            <h4><i class="fas fa-star"></i> 장점</h4>
+                            <p th:text="${mbtiInfo?.strengths ?: '-'}">창의성, 열정, 사교성, 적응력</p>
+                        </div>
+                        <div class="detail-card weaknesses">
+                            <h4><i class="fas fa-exclamation-triangle"></i> 주의할 점</h4>
+                            <p th:text="${mbtiInfo?.weaknesses ?: '-'}">집중력 부족, 스트레스 민감, 세부사항 놓침</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI 분석 결과 -->
+                <div class="ai-analysis" th:if="${aiAnalysis}">
+                    <h3><i class="fas fa-robot"></i> AI 맞춤 분석</h3>
+                    <div class="analysis-content" th:utext="${#strings.replace(aiAnalysis, T(System).lineSeparator(), '<br>')}">
+                        AI 분석 결과가 여기에 표시됩니다...
+                    </div>
+                </div>
+            </section>
+
+            <!-- 댓글 섹션 -->
+            <section class="comments-section">
+                <div class="comments-header">
+                    <h3><i class="fas fa-comments"></i> 이 결과에 대한 댓글</h3>
+                    <span class="comments-count" th:text="${comments.size()} + '개의 댓글'">0개의 댓글</span>
+                </div>
+
+                <!-- 댓글 작성 폼 -->
+                <div class="comment-write">
+                    <form id="commentForm" class="comment-form">
+                        <input type="hidden" name="resultId" th:value="${resultId}">
+                        <div class="form-row">
+                            <select name="mbtiType" required>
+                                <option value="">내 MBTI</option>
+                                <option value="ENFP">ENFP</option>
+                                <option value="ENFJ">ENFJ</option>
+                                <option value="ENTP">ENTP</option>
+                                <option value="ENTJ">ENTJ</option>
+                                <option value="ESFP">ESFP</option>
+                                <option value="ESFJ">ESFJ</option>
+                                <option value="ESTP">ESTP</option>
+                                <option value="ESTJ">ESTJ</option>
+                                <option value="INFP">INFP</option>
+                                <option value="INFJ">INFJ</option>
+                                <option value="INTP">INTP</option>
+                                <option value="INTJ">INTJ</option>
+                                <option value="ISFP">ISFP</option>
+                                <option value="ISFJ">ISFJ</option>
+                                <option value="ISTP">ISTP</option>
+                                <option value="ISTJ">ISTJ</option>
+                            </select>
+                            <input type="text" name="nickname" placeholder="닉네임 (선택)" maxlength="50">
+                        </div>
+                        <div class="form-row">
+                            <textarea name="commentText" placeholder="이 결과에 대한 생각을 공유해주세요!" required maxlength="1000"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <button type="submit" class="comment-submit-btn">
+                                <i class="fas fa-paper-plane"></i> 댓글 작성
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 댓글 목록 -->
+                <div class="comments-list">
+                    <div th:if="${comments.empty}" class="empty-comments">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</p>
+                    </div>
+
+                    <div th:each="comment : ${comments}" class="comment-item" th:data-comment-id="${comment.commentId}">
+                        <div class="comment-header">
+                            <span class="mbti-badge" th:text="${comment.mbtiType}" th:data-mbti="${comment.mbtiType}">ENFP</span>
+                            <span class="nickname" th:text="${comment.nickname ?: '익명'}">익명</span>
+                            <time th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">2024-12-25 14:30</time>
+                        </div>
+                        <div class="comment-content">
+                            <p th:text="${comment.commentText}">댓글 내용</p>
+                        </div>
+                        <div class="comment-actions">
+                            <button class="like-btn" th:onclick="'likeComment(' + ${comment.commentId} + ')'">
+                                <i class="fas fa-heart"></i>
+                                <span th:text="${comment.likesCount}">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 같은 MBTI 타입 댓글들 -->
+            <section class="same-type-comments" th:if="${!sameTypeComments.empty}">
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-users"></i> 
+                        같은 <span th:text="${mbtiType}">ENFP</span> 타입의 다른 댓글들
+                    </h3>
+                    <a th:href="@{/comments(mbti=${mbtiType})}" class="view-all-btn">
+                        전체 보기 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="mini-comments-list">
+                    <div th:each="comment : ${sameTypeComments}" class="mini-comment">
+                        <div class="mini-comment-header">
+                            <span class="nickname" th:text="${comment.nickname ?: '익명'}">익명</span>
+                            <time th:text="${#temporals.format(comment.createdAt, 'MM-dd')}">12-25</time>
+                        </div>
+                        <p th:text="${#strings.length(comment.commentText) > 80 ? #strings.substring(comment.commentText, 0, 80) + '...' : comment.commentText}">
+                            댓글 내용...
+                        </p>
+                        <div class="mini-comment-actions">
+                            <span class="likes"><i class="fas fa-heart"></i> <span th:text="${comment.likesCount}">0</span></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 다른 액션들 -->
+            <section class="action-section">
+                <div class="action-buttons">
+                    <a th:href="@{/test}" class="action-btn primary">
+                        <i class="fas fa-redo"></i> 다시 테스트하기
+                    </a>
+                    <a th:href="@{/mbti/} + ${mbtiType}" class="action-btn secondary">
+                        <i class="fas fa-info-circle"></i> <span th:text="${mbtiType}">ENFP</span> 더 알아보기
+                    </a>
+                    <a th:href="@{/comments(mbti=${mbtiType})}" class="action-btn secondary">
+                        <i class="fas fa-users"></i> <span th:text="${mbtiType}">ENFP</span> 커뮤니티
+                    </a>
+                    <a th:href="@{/statistics}" class="action-btn secondary">
+                        <i class="fas fa-chart-line"></i> 전체 통계 보기
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <!-- 푸터 -->
+        <footer class="footer">
+            <p>&copy; 2024 MBTI 테스트. 당신의 성격을 더 깊이 이해해보세요! 🌟</p>
+        </footer>
+    </div>
+
+    <!-- 토스트 메시지 -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">메시지</span>
+        </div>
+    </div>
+
+    <!-- 로딩 오버레이 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>처리 중...</p>
+        </div>
+    </div>
+
+    <script th:src="@{/js/result.js}"></script>
+    <script th:src="@{/js/share.js}"></script>
+    <script th:inline="javascript">
+        // 전역 변수 설정
+        window.resultData = {
+            resultId: /*[[${resultId}]]*/ null,
+            mbtiType: /*[[${mbtiType}]]*/ null,
+            mbtiInfo: /*[[${mbtiInfo}]]*/ {}
+        };
+        
+        // 카카오 SDK 초기화
+        const kakaoApiKey = /*[[${@environment.getProperty('kakao.api.key')}]]*/ null;
+        if (typeof Kakao !== 'undefined' && kakaoApiKey && kakaoApiKey !== 'your-kakao-api-key') {
+            Kakao.init(kakaoApiKey);
+        }
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeResultPage();
+            setupCommentForm();
+            setupShareButtons();
+        });
+    </script>
+</body>
+</html>

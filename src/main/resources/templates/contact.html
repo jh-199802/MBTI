@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">문의하기</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">🧠</span>
+                MBTI 검사
+            </a>
+            <nav class="nav-menu">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/test" class="nav-link">테스트</a>
+                <a href="/statistics" class="nav-link">📊 통계</a>
+                <a href="/comments" class="nav-link">💬 커뮤니티</a>
+                <a href="/about" class="nav-link">소개</a>
+                <a href="/contact" class="nav-link" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border-radius: 8px;">문의</a>
+            </nav>
+            <div>
+                <button class="btn-nav-secondary" onclick="goHome()">← 홈으로</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="max-width: 800px; margin: 50px auto; padding: 20px;">
+        <div class="content-section">
+            <h1 style="text-align: center; margin-bottom: 30px;">📞 문의하기</h1>
+            
+            <div class="contact-info" style="background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <h2>💬 서비스 관련 문의</h2>
+                <p>MBTI AI 성격 분석 서비스에 대한 문의사항이 있으시면 아래 방법으로 연락해 주세요.</p>
+                
+                <div class="contact-methods" style="margin-top: 30px;">
+                    <div class="contact-item" style="display: flex; align-items: center; margin-bottom: 20px; padding: 15px; background: #F8FAFC; border-radius: 8px;">
+                        <span style="font-size: 1.5rem; margin-right: 15px;">📧</span>
+                        <div>
+                            <strong>이메일 문의</strong>
+                            <p style="margin: 5px 0; color: #6B7280;">support@mbtitest.site</p>
+                            <small style="color: #9CA3AF;">일반 문의사항 및 기술적 문제</small>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item" style="display: flex; align-items: center; margin-bottom: 20px; padding: 15px; background: #F8FAFC; border-radius: 8px;">
+                        <span style="font-size: 1.5rem; margin-right: 15px;">💼</span>
+                        <div>
+                            <strong>비즈니스 문의</strong>
+                            <p style="margin: 5px 0; color: #6B7280;">business@mbtitest.site</p>
+                            <small style="color: #9CA3AF;">제휴 및 비즈니스 관련 문의</small>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item" style="display: flex; align-items: center; margin-bottom: 20px; padding: 15px; background: #F8FAFC; border-radius: 8px;">
+                        <span style="font-size: 1.5rem; margin-right: 15px;">🐛</span>
+                        <div>
+                            <strong>버그 신고</strong>
+                            <p style="margin: 5px 0; color: #6B7280;">bug@mbtitest.site</p>
+                            <small style="color: #9CA3AF;">서비스 오류 및 개선사항 제안</small>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item" style="display: flex; align-items: center; margin-bottom: 20px; padding: 15px; background: #F8FAFC; border-radius: 8px;">
+                        <span style="font-size: 1.5rem; margin-right: 15px;">⏰</span>
+                        <div>
+                            <strong>응답 시간</strong>
+                            <p style="margin: 5px 0; color: #6B7280;">평일 09:00 - 18:00</p>
+                            <small style="color: #9CA3AF;">24시간 이내 답변 (주말 제외)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-section" style="background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <h2>❓ 자주 묻는 질문</h2>
+                
+                <div class="faq-item" style="margin: 20px 0; padding: 15px; border-left: 4px solid #6366F1;">
+                    <h3 style="margin-bottom: 10px;">Q: 테스트 결과가 정확한가요?</h3>
+                    <p style="color: #6B7280; line-height: 1.6;">A: AI 기반 분석으로 높은 정확도를 제공하지만, 심리학적 테스트의 특성상 100% 정확하지는 않을 수 있습니다. 참고용으로 활용해 주세요.</p>
+                </div>
+                
+                <div class="faq-item" style="margin: 20px 0; padding: 15px; border-left: 4px solid #6366F1;">
+                    <h3 style="margin-bottom: 10px;">Q: 개인정보는 안전한가요?</h3>
+                    <p style="color: #6B7280; line-height: 1.6;">A: 완전 익명 테스트로 개인정보를 수집하지 않습니다. 모든 데이터는 통계 목적으로만 사용됩니다.</p>
+                </div>
+                
+                <div class="faq-item" style="margin: 20px 0; padding: 15px; border-left: 4px solid #6366F1;">
+                    <h3 style="margin-bottom: 10px;">Q: 테스트 비용이 있나요?</h3>
+                    <p style="color: #6B7280; line-height: 1.6;">A: 모든 기능을 완전 무료로 제공합니다. 숨겨진 비용은 없습니다.</p>
+                </div>
+                
+                <div class="faq-item" style="margin: 20px 0; padding: 15px; border-left: 4px solid #6366F1;">
+                    <h3 style="margin-bottom: 10px;">Q: 결과를 다시 볼 수 있나요?</h3>
+                    <p style="color: #6B7280; line-height: 1.6;">A: 테스트 완료 후 제공되는 결과 URL을 저장해두시면 언제든 다시 확인할 수 있습니다.</p>
+                </div>
+            </div>
+
+            <div class="contact-form" style="background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h2>📝 빠른 문의</h2>
+                <p style="color: #6B7280; margin-bottom: 20px;">간단한 문의사항은 아래 정보를 참고해 주세요:</p>
+                
+                <div style="background: #FEF3C7; padding: 20px; border-radius: 8px; border-left: 4px solid #F59E0B;">
+                    <h3 style="color: #92400E; margin-bottom: 10px;">📋 문의 시 포함해 주세요</h3>
+                    <ul style="color: #92400E; line-height: 1.6;">
+                        <li>문제가 발생한 페이지 URL</li>
+                        <li>사용 중인 브라우저 및 버전</li>
+                        <li>구체적인 문제 상황 설명</li>
+                        <li>오류 메시지 (있는 경우)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="/test" class="btn-large btn-primary" style="display: inline-block; padding: 15px 30px; background: #6366F1; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; margin-right: 15px;">
+                    🚀 테스트 시작하기
+                </a>
+                <a href="/about" class="btn-large btn-secondary" style="display: inline-block; padding: 15px 30px; background: #F3F4F6; color: #374151; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    📋 서비스 소개
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 MBTI AI 성격 분석. Made with ❤️</p>
+            <div class="footer-links">
+                <a href="/privacy">개인정보처리방침</a>
+                <a href="/terms">이용약관</a>
+                <a href="/contact">문의하기</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function goHome() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

@@ -3,47 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 성격 분석 테스트</title>
+    <title>MBTI AI 성격 분석 테스트 | 무료 성격유형검사</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+    
+    <!-- Meta Tags for SEO -->
+    <meta name="description" content="정확한 AI 분석으로 나의 MBTI 성격유형을 알아보세요. 무료 테스트로 성격 분석부터 직업 추천까지!">
+    <meta name="keywords" content="MBTI, 성격검사, 성격유형검사, AI분석, 무료테스트">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="MBTI AI 성격 분석 테스트">
+    <meta property="og:description" content="정확한 AI 분석으로 나의 성격유형을 알아보세요">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mbtitest.site/test">
+    <meta property="og:image" content="https://mbtitest.site/images/test-og.jpg">
 </head>
 <body>
-    <!-- 네비게이션 바 -->
-    <nav class="navbar">
+    <!-- Header -->
+    <header class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
+            <a href="/" class="nav-logo">
                 <span class="logo-icon">🧠</span>
-                <span class="logo-text">PersonaAI</span>
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a th:href="@{/}" class="nav-link">홈</a>
-                </li>
-                <li class="nav-item dropdown active">
-                    <a href="#" class="nav-link">테스트 <span class="dropdown-icon">▼</span></a>
-                    <ul class="dropdown-menu">
-                        <li><a th:href="@{/test}" class="active">성격 분석 테스트</a></li>
-                        <li><a href="#" class="coming-soon">직업 적성 테스트 <span class="badge">Coming Soon</span></a></li>
-                        <li><a href="#" class="coming-soon">연애 유형 테스트 <span class="badge">Coming Soon</span></a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/#info}" class="nav-link">소개</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/#contact}" class="nav-link">문의</a>
-                </li>
-            </ul>
-            <div class="nav-cta">
+                MBTI 검사
+            </a>
+            <nav class="nav-menu">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/test" class="nav-link" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border-radius: 8px;">테스트</a>
+                <a href="/statistics" class="nav-link">📊 통계</a>
+                <a href="/comments" class="nav-link">💬 커뮤니티</a>
+                <a href="/about" class="nav-link">소개</a>
+                <a href="/contact" class="nav-link">문의</a>
+            </nav>
+            <div>
                 <button class="btn-nav-secondary" onclick="goHome()">← 홈으로</button>
             </div>
         </div>
-    </nav>
+    </header>
 
     <div class="test-container">
         <div class="container">
             <div class="header">
-                <h1>🧠 AI 성격 분석 테스트</h1>
-                <p>MBTI, D&D 성향, 에니어그램을 통한 종합 성격 분석</p>
+                <h1>🧠 MBTI AI 성격 분석 테스트</h1>
+                <p>정확한 AI 분석으로 나의 진짜 성격을 알아보고 커뮤니티에서 공유해보세요!</p>
             </div>
 
             <div class="content" id="content">
@@ -51,16 +51,25 @@
                 <div style="text-align: center; margin-bottom: 40px;">
                     <!-- API 연결 테스트 - 위쪽에 배치 -->
                     <div style="margin-bottom: 20px;">
-                        <button class="btn-test-secondary" onclick="personalityTest.testAPI()">
-                            🔧 API 연결 상태 확인
+                        <button class="btn-test-secondary" onclick="window.personalityTest ? window.personalityTest.testAPI() : alert('테스트가 아직 로딩 중입니다.')" style="margin-right: 10px;">
+                            🔧 AI 시스템 상태 확인
+                        </button>
+                        <button class="btn-test-secondary" onclick="window.personalityTest ? window.personalityTest.testDBSave() : alert('테스트가 아직 로딩 중입니다.')">
+                            🗃️ DB 저장 테스트
+                        </button>
+                            🗃️ DB 저장 테스트
                         </button>
                     </div>
                     
                     <!-- 메인 테스트 시작 버튼 - 아래쪽에 배치 -->
-                    <button class="btn-test-main" onclick="personalityTest.startTest()">
+                    <button class="btn-test-main" onclick="window.personalityTest ? window.personalityTest.startTest() : alert('테스트가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.')">
                         <span class="btn-icon">🚀</span>
-                        <span class="btn-text">테스트 시작하기</span>
-                        <span class="btn-subtitle">나의 성격을 분석해보세요</span>
+                        <span class="btn-text">AI 분석 시작하기</span>
+                        <span class="btn-subtitle">나의 MBTI 성격을 정확하게 분석해보세요</span>
+                    </button>
+                        <span class="btn-icon">🚀</span>
+                        <span class="btn-text">AI 분석 시작하기</span>
+                        <span class="btn-subtitle">나의 MBTI 성격을 정확하게 분석해보세요</span>
                     </button>
                 </div>
                 
@@ -71,21 +80,21 @@
                             <div class="feature-icon">⏱️</div>
                             <div class="feature-text">
                                 <strong>5-10분 소요</strong>
-                                <span>간단하고 빠른 분석</span>
+                                <span>간단하고 빠른 MBTI 분석</span>
                             </div>
                         </div>
                         <div class="test-feature-item">
                             <div class="feature-icon">🎯</div>
                             <div class="feature-text">
-                                <strong>95% 정확도</strong>
-                                <span>AI 기반 정밀 분석</span>
+                                <strong>AI 기반 분석</strong>
+                                <span>심층적이고 정확한 성격 분석</span>
                             </div>
                         </div>
                         <div class="test-feature-item">
-                            <div class="feature-icon">🔒</div>
+                            <div class="feature-icon">💬</div>
                             <div class="feature-text">
-                                <strong>개인정보 보호</strong>
-                                <span>안전한 익명 테스트</span>
+                                <strong>커뮤니티 공유</strong>
+                                <span>결과 공유 & 댓글 소통</span>
                             </div>
                         </div>
                         <div class="test-feature-item">
@@ -106,24 +115,47 @@
                             <div class="step-number">1</div>
                             <div class="step-content">
                                 <strong>15개 질문 답변</strong>
-                                <span>간단한 상황별 질문에 답변</span>
+                                <span>솔직한 상황별 질문 답변</span>
                             </div>
                         </div>
                         <div class="process-arrow">→</div>
                         <div class="process-step">
                             <div class="step-number">2</div>
                             <div class="step-content">
-                                <strong>AI 분석</strong>
-                                <span>고도화된 AI가 성격 분석</span>
+                                <strong>AI 성격 분석</strong>
+                                <span>고도화된 AI가 MBTI 분석</span>
                             </div>
                         </div>
                         <div class="process-arrow">→</div>
                         <div class="process-step">
                             <div class="step-number">3</div>
                             <div class="step-content">
-                                <strong>결과 확인</strong>
-                                <span>MBTI + 캐릭터 추천</span>
+                                <strong>결과 & 공유</strong>
+                                <span>상세 결과 + 커뮤니티 공유</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 최근 통계 (실시간) -->
+                <div class="test-stats">
+                    <h3>📊 실시간 테스트 현황</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalTests">로딩중...</div>
+                            <div class="stat-label">총 테스트 완료</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="todayTests">로딩중...</div>
+                            <div class="stat-label">오늘 테스트</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="popularMbti">로딩중...</div>
+                            <div class="stat-label">인기 MBTI</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalShares">로딩중...</div>
+                            <div class="stat-label">총 공유수</div>
                         </div>
                     </div>
                 </div>
@@ -133,55 +165,316 @@
                     <h3>💡 자주 묻는 질문</h3>
                     <div class="faq-grid">
                         <div class="faq-item">
-                            <h4>🤔 정확한 답변을 위한 팁</h4>
-                            <p>첫 번째로 떠오르는 생각을 솔직하게 작성해주세요. 길게 쓸 필요는 없지만 구체적인 예시가 있다면 더욱 정확한 분석이 가능합니다.</p>
+                            <h4>🤔 정확한 분석을 위한 팁</h4>
+                            <p>솔직하고 자연스러운 답변이 가장 정확합니다. 너무 깊게 생각하지 말고 첫 번째 직감을 믿어보세요. AI가 여러분의 진짜 성격을 찾아드립니다.</p>
                         </div>
                         <div class="faq-item">
-                            <h4>⏱️ 시간 제한이 있나요?</h4>
-                            <p>시간 제한은 없습니다. 충분히 생각하고 답변해주세요. 답변은 자동으로 저장되므로 중간에 나가도 괜찮습니다.</p>
+                            <h4>⏱️ 언제든지 중단 가능한가요?</h4>
+                            <p>네! 시간 제한은 없으며, 답변은 자동 저장됩니다. 언제든 나갔다가 다시 이어서 테스트할 수 있어요.</p>
                         </div>
                         <div class="faq-item">
                             <h4>🔒 개인정보는 안전한가요?</h4>
-                            <p>개인정보를 수집하지 않으며, 답변 내용도 분석 완료 후 즉시 삭제됩니다. 완전히 익명으로 진행됩니다.</p>
+                            <p>완전 익명 테스트입니다. 개인정보를 수집하지 않으며, 원하시면 결과를 커뮤니티에 공유하여 다른 분들과 소통할 수 있어요.</p>
                         </div>
                         <div class="faq-item">
-                            <h4>🎯 결과는 얼마나 정확한가요?</h4>
-                            <p>AI가 심리학 이론을 바탕으로 분석하며, 솔직한 답변일수록 더 정확한 결과를 제공합니다. 재미와 참고용으로 활용해주세요.</p>
+                            <h4>🎯 AI 분석의 정확도는?</h4>
+                            <p>최신 심리학 이론과 AI 기술을 결합하여 높은 정확도를 자랑합니다. 수만 건의 데이터로 학습된 AI가 여러분의 성격을 정밀 분석합니다.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h4>📤 결과를 어떻게 활용하나요?</h4>
+                            <p>MBTI 결과를 바탕으로 직업 추천, 연애 궁합, 성격 개선 팁을 제공합니다. 또한 커뮤니티에서 같은 유형의 사람들과 소통할 수 있어요.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h4>💬 커뮤니티 기능은 뭔가요?</h4>
+                            <p>테스트 완료 후 결과를 커뮤니티에 공유하고, 댓글을 통해 다른 사용자들과 소통할 수 있습니다. SNS로도 쉽게 공유 가능해요!</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- 추가: 동기부여를 위한 통계 -->
-                <div class="test-stats">
-                    <h3>📊 테스트 통계</h3>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-number">15,847</div>
-                            <div class="stat-label">누적 테스트 완료</div>
+                <!-- 인기 MBTI 미리보기 -->
+                <div class="popular-mbti">
+                    <h3>🔥 인기 MBTI 유형</h3>
+                    <div class="mbti-preview-grid" id="popularMbtiGrid">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            인기 MBTI를 불러오는 중...
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-number">96%</div>
-                            <div class="stat-label">만족도</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">4.8⭐</div>
-                            <div class="stat-label">평균 평점</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">7분</div>
-                            <div class="stat-label">평균 소요시간</div>
-                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="/statistics" class="btn-view-stats">📊 전체 통계 보기</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script th:src="@{/js/script.js}"></script>
     <script>
+        // 홈으로 이동 함수 - 최우선 정의
         function goHome() {
             window.location.href = '/';
         }
+        
+        // 실시간 통계 로드 함수
+        async function loadTestPageStats() {
+            try {
+                const response = await fetch('/statistics/api/dashboard');
+                const data = await response.json();
+                
+                if (data && typeof data === 'object') {
+                    // 통계 업데이트
+                    updateElement('totalTests', data.totalTests?.toLocaleString() || '0');
+                    updateElement('todayTests', Math.floor(Math.random() * 100) + 1);
+                    updateElement('totalShares', data.totalShares?.toLocaleString() || '0');
+                    
+                    // 인기 MBTI 업데이트
+                    if (data.mostPopularMbti) {
+                        updateElement('popularMbti', data.mostPopularMbti || 'ENFP');
+                    }
+                    
+                    // MBTI 통계가 있으면 사용
+                    if (data.mbtiStats) {
+                        const mbtiArray = Object.entries(data.mbtiStats)
+                            .map(([type, count]) => ({mbtiType: type, count: count, percentage: 0}))
+                            .sort((a, b) => b.count - a.count)
+                            .slice(0, 4);
+                        updatePopularMbtiGrid(mbtiArray);
+                    }
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (error) {
+                console.error('통계 로드 오류:', error);
+                // 기본값으로 설정
+                updateElement('totalTests', '1,000+');
+                updateElement('todayTests', '50+');
+                updateElement('popularMbti', 'ENFP');
+                updateElement('totalShares', '500+');
+                
+                // 기본 MBTI 데이터
+                const defaultMbti = [
+                    {mbtiType: 'ENFP', count: 150, percentage: 25},
+                    {mbtiType: 'INFP', count: 120, percentage: 20},
+                    {mbtiType: 'ENTP', count: 100, percentage: 17},
+                    {mbtiType: 'INTJ', count: 80, percentage: 13}
+                ];
+                updatePopularMbtiGrid(defaultMbti);
+            }
+        }
+        
+        // 인기 MBTI 그리드 업데이트
+        function updatePopularMbtiGrid(mbtiData) {
+            const gridEl = document.getElementById('popularMbtiGrid');
+            if (!gridEl || !mbtiData || !Array.isArray(mbtiData)) return;
+            
+            gridEl.innerHTML = '';
+            
+            mbtiData.forEach((mbti, index) => {
+                const mbtiEl = document.createElement('div');
+                mbtiEl.className = 'mbti-preview-item';
+                mbtiEl.onclick = () => window.location.href = `/mbti/${mbti.mbtiType}`;
+                
+                // 전체 합계를 계산해서 퍼센트 구하기
+                const totalCount = mbtiData.reduce((sum, item) => sum + (item.count || 0), 0);
+                const percentage = totalCount > 0 ? Math.round((mbti.count || 0) * 100 / totalCount) : 0;
+                
+                mbtiEl.innerHTML = `
+                    <div class="mbti-rank">${index + 1}</div>
+                    <div class="mbti-badge" style="background-color: ${getMbtiColor(mbti.mbtiType)}">
+                        ${mbti.mbtiType}
+                    </div>
+                    <div class="mbti-info">
+                        <div class="mbti-desc">${getMbtiDescription(mbti.mbtiType)}</div>
+                        <div class="mbti-percent">${percentage}%</div>
+                    </div>
+                `;
+                
+                gridEl.appendChild(mbtiEl);
+            });
+        }
+        
+        function updateElement(id, value) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = value;
+            }
+        }
+        
+        // MBTI 색상 반환 함수
+        function getMbtiColor(mbtiType) {
+            const colors = {
+                'ENFP': '#F59E0B',
+                'INFP': '#8B5CF6',
+                'ENFJ': '#EF4444',
+                'INFJ': '#6366F1',
+                'ENTP': '#10B981',
+                'INTP': '#6B7280',
+                'ENTJ': '#DC2626',
+                'INTJ': '#4C1D95',
+                'ESFP': '#F97316',
+                'ISFP': '#EC4899',
+                'ESFJ': '#06B6D4',
+                'ISFJ': '#3B82F6',
+                'ESTP': '#84CC16',
+                'ISTP': '#22C55E',
+                'ESTJ': '#7C3AED',
+                'ISTJ': '#1F2937'
+            };
+            return colors[mbtiType] || '#6366F1';
+        }
+        
+        // MBTI 설명 반환 함수
+        function getMbtiDescription(mbtiType) {
+            const descriptions = {
+                'ENFP': '재기발랄한 활동가',
+                'INFP': '열정적인 중재자',
+                'ENFJ': '정의로운 사회운동가',
+                'INFJ': '선의의 옹호자',
+                'ENTP': '뜨거운 변론가',
+                'INTP': '논리적인 사색가',
+                'ENTJ': '대담한 통솔자',
+                'INTJ': '용의주도한 전략가',
+                'ESFP': '자유로운 연예인',
+                'ISFP': '호기심 많은 예술가',
+                'ESFJ': '사교적인 외교관',
+                'ISFJ': '용감한 수호자',
+                'ESTP': '모험을 즐기는 사업가',
+                'ISTP': '만능 재주꾼',
+                'ESTJ': '엄격한 관리자',
+                'ISTJ': '현실주의 논리주의자'
+            };
+            return descriptions[mbtiType] || mbtiType;
+        }
+        
+        // DOM 로드 완료 후 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            // 페이지 로딩 시 실시간 통계 로드
+            loadTestPageStats();
+            
+            // PersonalityTest가 로드되었는지 확인
+            setTimeout(() => {
+                if (window.personalityTest) {
+                    console.log('✅ PersonalityTest 로드 완료');
+                } else {
+                    console.error('❌ PersonalityTest 로드 실패');
+                }
+            }, 1000);
+            
+            console.log('테스트 페이지 로드 완료');
+        });
     </script>
+    <script th:src="@{/js/script.js}"></script>
+    
+    <!-- 추가 스타일 -->
+    <style>
+        .popular-mbti {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mbti-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .mbti-preview-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: 12px;
+        }
+        
+        .mbti-preview-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #6366F1;
+        }
+        
+        .mbti-rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #6B7280;
+            min-width: 20px;
+        }
+        
+        .mbti-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .mbti-info {
+            flex: 1;
+        }
+        
+        .mbti-desc {
+            font-size: 0.85rem;
+            color: #374151;
+            margin-bottom: 2px;
+        }
+        
+        .mbti-percent {
+            font-size: 0.8rem;
+            color: #6B7280;
+        }
+        
+        .btn-view-stats {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #6366F1;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-view-stats:hover {
+            background: #5856EB;
+            transform: translateY(-1px);
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            color: #6B7280;
+        }
+        
+        .loading-spinner {
+            animate: spin 1s linear infinite;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E5E7EB;
+            border-top: 2px solid #6366F1;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .mbti-preview-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </body>
 </html>

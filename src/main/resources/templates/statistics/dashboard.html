@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">MBTI 통계 대시보드</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/statistics.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-chart-bar"></i> MBTI 통계 대시보드</h1>
+                <nav class="main-nav">
+                    <a th:href="@{/}" class="nav-link">
+                        <i class="fas fa-home"></i> 메인
+                    </a>
+                    <a th:href="@{/test}" class="nav-link">
+                        <i class="fas fa-clipboard-check"></i> 테스트
+                    </a>
+                    <a th:href="@{/comments}" class="nav-link">
+                        <i class="fas fa-comments"></i> 커뮤니티
+                    </a>
+                    <a th:href="@{/statistics}" class="nav-link active">
+                        <i class="fas fa-chart-line"></i> 통계
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- 메인 대시보드 -->
+        <main class="dashboard-main">
+            <!-- 주요 통계 카드들 -->
+            <section class="stats-overview">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>전체 테스트</h3>
+                            <p class="stat-number" th:text="${dashboardStats.totalTests ?: 0}">0</p>
+                            <span class="stat-label">누적 참여자</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon today">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>오늘 테스트</h3>
+                            <p class="stat-number" th:text="${dashboardStats.todayTests ?: 0}">0</p>
+                            <span class="stat-label">오늘 참여자</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon comments">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>전체 댓글</h3>
+                            <p class="stat-number" th:text="${dashboardStats.totalComments ?: 0}">0</p>
+                            <span class="stat-label">커뮤니티 활동</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon shares">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>전체 공유</h3>
+                            <p class="stat-number" th:text="${dashboardStats.totalShares ?: 0}">0</p>
+                            <span class="stat-label">SNS 공유수</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon views">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>페이지뷰</h3>
+                            <p class="stat-number" th:text="${dashboardStats.totalViews ?: 0}">0</p>
+                            <span class="stat-label">전체 방문수</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon popular">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>인기 MBTI</h3>
+                            <p class="stat-mbti" th:text="${dashboardStats.mostPopularMbti ?: 'ENFP'}">ENFP</p>
+                            <span class="stat-label">1위 성격유형</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 차트 섹션 -->
+            <section class="charts-section">
+                <div class="charts-grid">
+                    <!-- MBTI 타입별 분포 차트 -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-pie-chart"></i> MBTI 타입별 분포</h3>
+                            <button class="refresh-btn" onclick="refreshMbtiChart()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="mbtiChart"></canvas>
+                        </div>
+                        <div class="chart-legend" id="mbtiLegend"></div>
+                    </div>
+
+                    <!-- 일별 테스트 추이 -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-line-chart"></i> 일별 테스트 추이</h3>
+                            <button class="refresh-btn" onclick="refreshDailyChart()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="dailyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 시간대별 방문 통계 -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-clock"></i> 시간대별 방문 패턴</h3>
+                            <button class="refresh-btn" onclick="refreshHourlyChart()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="hourlyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 공유 플랫폼 분석 -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-share-alt"></i> SNS 공유 플랫폼</h3>
+                            <button class="refresh-btn" onclick="refreshShareChart()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="shareChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 실시간 활동 -->
+            <section class="activity-section">
+                <div class="activity-grid">
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h3><i class="fas fa-fire"></i> 실시간 활동</h3>
+                            <span class="live-indicator">LIVE</span>
+                        </div>
+                        <div class="activity-list" id="realtimeActivity">
+                            <div class="activity-item">
+                                <i class="fas fa-user-plus"></i>
+                                <span>새로운 ENFP 결과가 나왔습니다!</span>
+                                <time>방금 전</time>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-comment"></i>
+                                <span>INFP 커뮤니티에 새 댓글이 달렸습니다.</span>
+                                <time>2분 전</time>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-share"></i>
+                                <span>카카오톡으로 결과가 공유되었습니다.</span>
+                                <time>5분 전</time>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h3><i class="fas fa-trophy"></i> 인기 순위</h3>
+                        </div>
+                        <div class="ranking-list">
+                            <div class="rank-item" th:each="mbti, iterStat : ${dashboardStats.mostActiveCommentMbti}">
+                                <span class="rank-number" th:text="${iterStat.index + 1}">1</span>
+                                <span class="rank-mbti" th:text="${mbti}">ENFP</span>
+                                <span class="rank-label">댓글 활발</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 새로고침 버튼 -->
+            <div class="action-buttons">
+                <button class="refresh-all-btn" onclick="refreshAllStats()">
+                    <i class="fas fa-sync-alt"></i> 전체 새로고침
+                </button>
+                <a th:href="@{/statistics/admin?key=admin123}" class="admin-btn">
+                    <i class="fas fa-cog"></i> 관리자 모드
+                </a>
+            </div>
+        </main>
+
+        <!-- 푸터 -->
+        <footer class="footer">
+            <p>&copy; 2024 MBTI 테스트. 모든 통계는 실시간으로 업데이트됩니다.</p>
+        </footer>
+    </div>
+
+    <!-- 로딩 오버레이 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>통계 데이터를 불러오는 중...</p>
+        </div>
+    </div>
+
+    <script th:src="@{/js/statistics.js}"></script>
+    <script th:inline="javascript">
+        // Thymeleaf에서 JavaScript로 데이터 전달
+        window.dashboardData = /*[[${dashboardStats}]]*/ {};
+        window.mbtiStats = /*[[${mbtiStats}]]*/ {};
+        
+        // 페이지 로드 시 차트 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('페이지 로드됨, 차트 초기화 시작');
+            console.log('대시보드 데이터:', window.dashboardData);
+            console.log('MBTI 통계:', window.mbtiStats);
+            
+            // 로딩 표시
+            showLoading();
+            
+            // 타임아웃 설정 (5초 후 강제 로딩 해제)
+            const loadingTimeout = setTimeout(() => {
+                console.warn('로딩 타임아웃 - 강제로 로딩 해제');
+                hideLoading();
+            }, 5000);
+            
+            // 차트 초기화
+            initializeCharts().then(() => {
+                console.log('모든 차트 초기화 완료');
+                clearTimeout(loadingTimeout);
+                startRealtimeUpdates();
+                hideLoading();
+            }).catch(error => {
+                console.error('차트 초기화 오류:', error);
+                clearTimeout(loadingTimeout);
+                hideLoading();
+            });
+        });
+    </script>
+</body>
+</html>

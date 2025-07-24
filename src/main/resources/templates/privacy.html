@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개인정보처리방침 - PersonaAI</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+    <style>
+        .privacy-container {
+            max-width: 800px;
+            margin: 100px auto 50px;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .privacy-title {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .privacy-section {
+            margin-bottom: 30px;
+        }
+        .privacy-section h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            transition: background 0.3s;
+        }
+        .back-button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="privacy-container">
+        <a th:href="@{/}" class="back-button">🏠 홈으로 돌아가기</a>
+        
+        <h1 class="privacy-title">개인정보처리방침</h1>
+        
+        <div class="privacy-section">
+            <h3>1. 개인정보의 처리목적</h3>
+            <p>PersonaAI는 다음의 목적을 위하여 개인정보를 처리합니다:</p>
+            <ul>
+                <li>MBTI 성격 분석 서비스 제공</li>
+                <li>서비스 이용 통계 분석</li>
+                <li>서비스 개선 및 맞춤형 콘텐츠 제공</li>
+                <li>고객 문의 응답 및 서비스 안내</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h3>2. 개인정보의 처리 및 보유기간</h3>
+            <p>회사는 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를 수집시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.</p>
+            <ul>
+                <li>테스트 결과: 1년 (통계 분석 목적)</li>
+                <li>방문 로그: 6개월</li>
+                <li>문의 내역: 3년</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h3>3. 개인정보의 제3자 제공</h3>
+            <p>회사는 정보주체의 개인정보를 제3자에게 제공하지 않습니다. 단, 다음의 경우에는 예외로 합니다:</p>
+            <ul>
+                <li>정보주체가 사전에 동의한 경우</li>
+                <li>법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h3>4. 개인정보처리의 위탁</h3>
+            <p>회사는 원활한 개인정보 업무처리를 위하여 다음과 같이 개인정보 처리업무를 위탁하고 있습니다:</p>
+            <ul>
+                <li>위탁받는 자: Google Cloud Platform</li>
+                <li>위탁하는 업무의 내용: 클라우드 서버 호스팅</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h3>5. 정보주체의 권리·의무 및 행사방법</h3>
+            <p>정보주체는 회사에 대해 언제든지 다음 각 호의 개인정보 보호 관련 권리를 행사할 수 있습니다:</p>
+            <ul>
+                <li>개인정보 처리정지 요구권</li>
+                <li>개인정보 열람요구권</li>
+                <li>개인정보 정정·삭제요구권</li>
+                <li>개인정보 처리정지 요구권</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h3>6. 개인정보의 안전성 확보조치</h3>
+            <p>회사는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다:</p>
+            <ul>
+                <li>개인정보 취급 직원의 최소화 및 교육</li>
+                <li>개인정보에 대한 접근 제한</li>
+                <li>개인정보를 안전하게 저장·전송할 수 있는 암호화기법 사용</li>
+                <li>해킹이나 컴퓨터 바이러스 등에 의한 개인정보 유출 및 훼손을 막기 위한 보안시스템 구축</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h3>7. 개인정보보호 책임자</h3>
+            <p>회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보보호 책임자를 지정하고 있습니다:</p>
+            <ul>
+                <li>개인정보보호 책임자: PersonaAI 개발팀</li>
+                <li>연락처: privacy@persona-ai.com</li>
+                <li>처리시간: 평일 09:00~18:00</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h3>8. 개인정보처리방침 변경</h3>
+            <p>이 개인정보처리방침은 2025년 1월 1일부터 적용됩니다. 법령·정책 또는 보안기술의 변경에 따라 내용의 추가·삭제 및 수정이 있을 시에는 변경사항의 시행 7일 전부터 공지사항을 통하여 고지할 것입니다.</p>
+        </div>
+        
+        <p style="text-align: center; margin-top: 40px; color: #7f8c8d;">
+            <strong>시행일자: 2025년 1월 1일</strong><br>
+            본 방침은 PersonaAI 서비스에 적용됩니다.
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">MBTI 커뮤니티</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/community.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-comments"></i> MBTI 커뮤니티</h1>
+                <nav class="main-nav">
+                    <a th:href="@{/}" class="nav-link">
+                        <i class="fas fa-home"></i> 메인
+                    </a>
+                    <a th:href="@{/test}" class="nav-link">
+                        <i class="fas fa-clipboard-check"></i> 테스트
+                    </a>
+                    <a th:href="@{/comments}" class="nav-link active">
+                        <i class="fas fa-comments"></i> 커뮤니티
+                    </a>
+                    <a th:href="@{/statistics}" class="nav-link">
+                        <i class="fas fa-chart-line"></i> 통계
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="community-main">
+            <!-- MBTI 필터 섹션 -->
+            <section class="filter-section">
+                <div class="filter-header">
+                    <h2>MBTI 타입별 댓글 보기</h2>
+                    <p>같은 성격 유형의 사람들과 소통해보세요! 💭</p>
+                </div>
+                
+                <div class="mbti-filter-grid">
+                    <a th:href="@{/comments}" class="mbti-filter-btn" th:classappend="${selectedMbti == null ? 'active' : ''}">
+                        <span class="filter-label">전체</span>
+                        <span class="filter-count" th:text="${totalComments}">0</span>
+                    </a>
+                    
+                    <div th:each="mbtiType : ${mbtiTypes}" class="mbti-filter-item">
+                        <a th:href="@{/comments(mbti=${mbtiType})}" 
+                           class="mbti-filter-btn" 
+                           th:classappend="${selectedMbti == mbtiType ? 'active' : ''}"
+                           th:data-mbti="${mbtiType}">
+                            <span class="filter-label" th:text="${mbtiType}">ENFP</span>
+                            <span class="filter-count" th:text="${commentStats.get(mbtiType) ?: 0}">0</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <div class="community-content">
+                <!-- 사이드바 -->
+                <aside class="community-sidebar">
+                    <!-- 댓글 작성 폼 -->
+                    <div class="write-section">
+                        <h3><i class="fas fa-pen"></i> 댓글 작성하기</h3>
+                        <form id="commentForm" class="comment-form">
+                            <div class="form-group">
+                                <label for="mbtiSelect">내 MBTI</label>
+                                <select id="mbtiSelect" name="mbtiType" required>
+                                    <option value="">MBTI 선택</option>
+                                    <option th:each="mbti : ${mbtiTypes}" th:value="${mbti}" th:text="${mbti}">ENFP</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="nicknameInput">닉네임 (선택)</label>
+                                <input type="text" id="nicknameInput" name="nickname" placeholder="익명으로 작성하려면 비워두세요" maxlength="50">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="commentText">댓글 내용</label>
+                                <textarea id="commentText" name="commentText" placeholder="같은 MBTI 타입의 사람들과 경험을 나누어보세요!" required maxlength="1000" rows="4"></textarea>
+                                <div class="char-count">
+                                    <span id="charCount">0</span>/1000
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-paper-plane"></i> 댓글 작성
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 인기 댓글 -->
+                    <div class="popular-section">
+                        <h3><i class="fas fa-fire"></i> 인기 댓글</h3>
+                        <div class="popular-comments">
+                            <div th:each="comment : ${popularComments}" class="popular-comment-item">
+                                <div class="comment-header">
+                                    <span class="mbti-badge" th:text="${comment.mbtiType}" th:data-mbti="${comment.mbtiType}">ENFP</span>
+                                    <span class="nickname" th:text="${comment.nickname != null ? comment.nickname : '익명'}">익명</span>
+                                </div>
+                                <p class="comment-preview" th:text="${#strings.length(comment.commentText) > 50 ? #strings.substring(comment.commentText, 0, 50) + '...' : comment.commentText}">댓글 내용...</p>
+                                <div class="comment-stats">
+                                    <span class="likes"><i class="fas fa-heart"></i> <span th:text="${comment.likesCount}">0</span></span>
+                                    <time th:text="${#temporals.format(comment.createdAt, 'MM-dd HH:mm')}">12-25 14:30</time>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 통계 위젯 -->
+                    <div class="stats-widget">
+                        <h3><i class="fas fa-chart-bar"></i> 커뮤니티 통계</h3>
+                        <div class="stat-items">
+                            <div class="stat-item">
+                                <span class="stat-label">전체 댓글</span>
+                                <span class="stat-value" th:text="${totalComments}">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">가장 활발한 MBTI</span>
+                                <span class="stat-value" th:text="${mostActiveMbti}">ENFP</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- 메인 댓글 영역 -->
+                <section class="comments-main">
+                    <div class="comments-header">
+                        <h2 th:if="${selectedMbti != null}">
+                            <span class="mbti-badge" th:text="${selectedMbti}" th:data-mbti="${selectedMbti}">ENFP</span> 
+                            타입의 댓글들
+                        </h2>
+                        <h2 th:unless="${selectedMbti != null}">
+                            <i class="fas fa-comments"></i> 전체 댓글
+                        </h2>
+                        <div class="sort-options">
+                            <button class="sort-btn active" data-sort="recent">
+                                <i class="fas fa-clock"></i> 최신순
+                            </button>
+                            <button class="sort-btn" data-sort="popular">
+                                <i class="fas fa-heart"></i> 인기순
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="comments-list" id="commentsList">
+                        <div th:if="${comments.empty}" class="empty-state">
+                            <i class="fas fa-comment-slash"></i>
+                            <h3>아직 댓글이 없습니다</h3>
+                            <p>첫 번째 댓글을 작성해보세요!</p>
+                        </div>
+
+                        <div th:each="comment : ${comments}" class="comment-card" th:data-comment-id="${comment.commentId}">
+                            <div class="comment-header">
+                                <div class="user-info">
+                                    <span class="mbti-badge" th:text="${comment.mbtiType}" th:data-mbti="${comment.mbtiType}">ENFP</span>
+                                    <span class="nickname" th:text="${comment.nickname != null ? comment.nickname : '익명'}">익명</span>
+                                </div>
+                                <div class="comment-actions">
+                                    <time th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">2024-12-25 14:30</time>
+                                    <div class="action-buttons">
+                                        <button class="like-btn" th:onclick="'likeComment(' + ${comment.commentId} + ')'">
+                                            <i class="fas fa-heart"></i>
+                                            <span th:text="${comment.likesCount}">0</span>
+                                        </button>
+                                        <button class="reply-btn" th:onclick="'replyToComment(' + ${comment.commentId} + ')'">
+                                            <i class="fas fa-reply"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                <p th:text="${comment.commentText}">댓글 내용이 여기에 표시됩니다...</p>
+                            </div>
+                            <div class="comment-footer">
+                                <span class="comment-time" th:text="${#temporals.format(comment.createdAt, 'M월 d일 HH:mm')}">12월 25일 14:30</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 더 보기 버튼 -->
+                    <div class="load-more-section" th:if="${comments.size() >= 20}">
+                        <button class="load-more-btn" onclick="loadMoreComments()">
+                            <i class="fas fa-chevron-down"></i> 더 많은 댓글 보기
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- 푸터 -->
+        <footer class="footer">
+            <p>&copy; 2024 MBTI 테스트. 건전한 커뮤니티 문화를 만들어가요! 💝</p>
+        </footer>
+    </div>
+
+    <!-- 토스트 메시지 -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">메시지</span>
+        </div>
+    </div>
+
+    <!-- 로딩 스피너 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>처리 중...</p>
+        </div>
+    </div>
+
+    <script th:src="@{/js/community.js}"></script>
+    <script th:inline="javascript">
+        // 현재 선택된 MBTI 타입
+        window.selectedMbti = /*[[${selectedMbti}]]*/ null;
+        
+        // 댓글 통계 데이터
+        window.commentStats = /*[[${commentStats}]]*/ {};
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCommunityPage();
+            setupCommentForm();
+            setupCharCounter();
+        });
+    </script>
+</body>
+</html>

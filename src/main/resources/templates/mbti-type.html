@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">MBTI 타입 상세</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/mbti-type.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" th:content="${mbtiType} + ' 성격 유형 상세 분석'">
+    <meta property="og:description" th:content="${mbtiInfo?.description ?: 'MBTI 성격 유형에 대해 자세히 알아보세요'}">
+    <meta property="og:image" th:content="@{'/images/mbti-' + ${#strings.toLowerCase(mbtiType)} + '.jpg'}">
+    <meta property="og:type" content="article">
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <h1>
+                    <span class="mbti-badge-header" th:text="${mbtiType}" th:data-mbti="${mbtiType}">ENFP</span>
+                    상세 분석
+                </h1>
+                <nav class="main-nav">
+                    <a th:href="@{/}" class="nav-link">
+                        <i class="fas fa-home"></i> 메인
+                    </a>
+                    <a th:href="@{/test}" class="nav-link">
+                        <i class="fas fa-clipboard-check"></i> 테스트
+                    </a>
+                    <a th:href="@{/comments}" class="nav-link">
+                        <i class="fas fa-comments"></i> 커뮤니티
+                    </a>
+                    <a th:href="@{/statistics}" class="nav-link">
+                        <i class="fas fa-chart-line"></i> 통계
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="mbti-main">
+            <!-- 타입 소개 섹션 -->
+            <section class="type-intro">
+                <div class="intro-card">
+                    <div class="intro-header">
+                        <div class="mbti-badge-large" th:data-mbti="${mbtiType}">
+                            <span class="mbti-text" th:text="${mbtiType}">ENFP</span>
+                        </div>
+                        <div class="intro-content">
+                            <h2 th:text="${mbtiInfo?.name ?: '알 수 없음'}">재기발랄한 활동가</h2>
+                            <p class="intro-description" th:text="${mbtiInfo?.description ?: '설명이 없습니다.'}">
+                                열정적이고 창의적인 성격으로 항상 새로운 가능성을 보는 사람
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="type-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span class="stat-label">이 타입 사용자</span>
+                            <span class="stat-value" th:text="${typeCount ?: 0} + '명'">0명</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-percentage"></i>
+                            <span class="stat-label">전체 중 비율</span>
+                            <span class="stat-value" id="typePercentage">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-trophy"></i>
+                            <span class="stat-label">인기 순위</span>
+                            <span class="stat-value" id="typeRanking">#1</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 성격 특성 분석 -->
+            <section class="characteristics">
+                <h3><i class="fas fa-brain"></i> 성격 특성 분석</h3>
+                <div class="characteristics-grid">
+                    <div class="characteristic-card strengths">
+                        <div class="card-header">
+                            <i class="fas fa-star"></i>
+                            <h4>주요 장점</h4>
+                        </div>
+                        <div class="card-content">
+                            <p th:text="${mbtiInfo?.strengths ?: '정보가 없습니다.'}">창의성, 열정, 사교성, 적응력</p>
+                            <ul class="strength-list" th:if="${mbtiInfo?.strengths}">
+                                <li th:each="strength : ${#strings.listSplit(mbtiInfo.strengths, ',')}" th:text="${#strings.trim(strength)}">창의성</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="characteristic-card weaknesses">
+                        <div class="card-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h4>주의할 점</h4>
+                        </div>
+                        <div class="card-content">
+                            <p th:text="${mbtiInfo?.weaknesses ?: '정보가 없습니다.'}">집중력 부족, 스트레스 민감, 세부사항 놓침</p>
+                            <ul class="weakness-list" th:if="${mbtiInfo?.weaknesses}">
+                                <li th:each="weakness : ${#strings.listSplit(mbtiInfo.weaknesses, ',')}" th:text="${#strings.trim(weakness)}">집중력 부족</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="characteristic-card careers">
+                        <div class="card-header">
+                            <i class="fas fa-briefcase"></i>
+                            <h4>추천 직업</h4>
+                        </div>
+                        <div class="card-content" id="careerRecommendations">
+                            <!-- JavaScript로 동적으로 채워짐 -->
+                        </div>
+                    </div>
+
+                    <div class="characteristic-card compatibility">
+                        <div class="card-header">
+                            <i class="fas fa-heart"></i>
+                            <h4>궁합 분석</h4>
+                        </div>
+                        <div class="card-content" id="compatibilityInfo">
+                            <!-- JavaScript로 동적으로 채워짐 -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 유명인 매칭 -->
+            <section class="celebrities">
+                <h3><i class="fas fa-star"></i> 같은 타입의 유명인</h3>
+                <div class="celebrities-grid" id="celebritiesGrid">
+                    <!-- JavaScript로 동적으로 채워짐 -->
+                </div>
+            </section>
+
+            <!-- 최근 테스트 결과들 -->
+            <section class="recent-results" th:if="${recentResults != null and !#lists.isEmpty(recentResults)}">
+                <div class="section-header">
+                    <h3><i class="fas fa-clock"></i> 최근 테스트 결과들</h3>
+                    <span class="results-count" th:text="'총 ' + ${typeCount} + '명이 이 타입을 받았어요'">총 0명이 이 타입을 받았어요</span>
+                </div>
+                
+                <div class="results-timeline">
+                    <div th:each="result : ${recentResults}" class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="result-summary">
+                                <span class="result-id">#{[[${result.resultId}]]}</span>
+                                <time th:text="${#temporals.format(result.createdAt, 'MM월 dd일 HH:mm')}">12월 25일 14:30</time>
+                            </div>
+                            <div class="result-preview" th:if="${result.aiAnalysis}">
+                                <p th:text="${#strings.length(result.aiAnalysis) > 100 ? #strings.substring(result.aiAnalysis, 0, 100) + '...' : result.aiAnalysis}">
+                                    AI 분석 결과 미리보기...
+                                </p>
+                            </div>
+                            <a th:href="@{'/result/' + ${result.resultId}}" class="view-result-btn">
+                                결과 보기 <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 커뮤니티 댓글들 -->
+            <section class="type-community" th:if="${typeComments != null and !#lists.isEmpty(typeComments)}">
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-comments"></i> 
+                        <span th:text="${mbtiType}">ENFP</span> 커뮤니티
+                    </h3>
+                    <a th:href="@{/comments(mbti=${mbtiType})}" class="view-all-btn">
+                        전체 댓글 보기 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="community-preview">
+                    <div th:each="comment : ${typeComments}" class="comment-preview">
+                        <div class="comment-header">
+                            <span class="nickname" th:text="${comment.nickname ?: '익명'}">익명</span>
+                            <time th:text="${#temporals.format(comment.createdAt, 'MM-dd HH:mm')}">12-25 14:30</time>
+                        </div>
+                        <div class="comment-content">
+                            <p th:text="${#strings.length(comment.commentText) > 150 ? #strings.substring(comment.commentText, 0, 150) + '...' : comment.commentText}">
+                                댓글 내용...
+                            </p>
+                        </div>
+                        <div class="comment-actions">
+                            <span class="likes">
+                                <i class="fas fa-heart"></i>
+                                <span th:text="${comment.likesCount}">0</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="join-community">
+                    <h4>💬 같은 타입의 사람들과 소통해보세요!</h4>
+                    <p>비슷한 성격의 사람들과 경험을 나누고 서로의 이야기를 들어보세요.</p>
+                    <a th:href="@{/comments(mbti=${mbtiType})}" class="join-btn">
+                        <i class="fas fa-users"></i> 커뮤니티 참여하기
+                    </a>
+                </div>
+            </section>
+
+            <!-- 다른 MBTI 타입들과 비교 -->
+            <section class="type-comparison">
+                <h3><i class="fas fa-balance-scale"></i> 다른 MBTI 타입과 비교</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-header">
+                        <h4>성격 유형별 분포</h4>
+                        <p>전체 사용자 중에서 각 타입이 차지하는 비율을 확인해보세요.</p>
+                    </div>
+                    
+                    <div class="mbti-distribution" id="mbtiDistribution">
+                        <!-- JavaScript로 동적으로 채워짐 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 액션 버튼들 -->
+            <section class="action-section">
+                <div class="action-buttons">
+                    <a th:href="@{/test}" class="action-btn primary">
+                        <i class="fas fa-clipboard-check"></i> 테스트 시작하기
+                    </a>
+                    <a th:href="@{/comments(mbti=${mbtiType})}" class="action-btn secondary">
+                        <i class="fas fa-comments"></i> 커뮤니티 참여
+                    </a>
+                    <button class="action-btn secondary" onclick="shareThisType()">
+                        <i class="fas fa-share-alt"></i> 이 타입 공유하기
+                    </button>
+                    <a th:href="@{/statistics}" class="action-btn secondary">
+                        <i class="fas fa-chart-line"></i> 전체 통계 보기
+                    </a>
+                </div>
+            </section>
+
+            <!-- 다른 MBTI 타입 탐색 -->
+            <section class="explore-types">
+                <h3><i class="fas fa-compass"></i> 다른 MBTI 타입 탐색하기</h3>
+                <div class="types-grid">
+                    <!-- ENFP -->
+                    <div class="type-card" th:classappend="${'ENFP' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ENFP}" th:unless="${'ENFP' == mbtiType}">
+                            <span class="type-badge" data-mbti="ENFP">ENFP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ENFP') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ENFP' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ENFP">ENFP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ENFP') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ENFJ -->
+                    <div class="type-card" th:classappend="${'ENFJ' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ENFJ}" th:unless="${'ENFJ' == mbtiType}">
+                            <span class="type-badge" data-mbti="ENFJ">ENFJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ENFJ') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ENFJ' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ENFJ">ENFJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ENFJ') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ENTP -->
+                    <div class="type-card" th:classappend="${'ENTP' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ENTP}" th:unless="${'ENTP' == mbtiType}">
+                            <span class="type-badge" data-mbti="ENTP">ENTP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ENTP') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ENTP' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ENTP">ENTP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ENTP') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ENTJ -->
+                    <div class="type-card" th:classappend="${'ENTJ' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ENTJ}" th:unless="${'ENTJ' == mbtiType}">
+                            <span class="type-badge" data-mbti="ENTJ">ENTJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ENTJ') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ENTJ' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ENTJ">ENTJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ENTJ') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ESFP -->
+                    <div class="type-card" th:classappend="${'ESFP' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ESFP}" th:unless="${'ESFP' == mbtiType}">
+                            <span class="type-badge" data-mbti="ESFP">ESFP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ESFP') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ESFP' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ESFP">ESFP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ESFP') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ESFJ -->
+                    <div class="type-card" th:classappend="${'ESFJ' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ESFJ}" th:unless="${'ESFJ' == mbtiType}">
+                            <span class="type-badge" data-mbti="ESFJ">ESFJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ESFJ') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ESFJ' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ESFJ">ESFJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ESFJ') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ESTP -->
+                    <div class="type-card" th:classappend="${'ESTP' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ESTP}" th:unless="${'ESTP' == mbtiType}">
+                            <span class="type-badge" data-mbti="ESTP">ESTP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ESTP') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ESTP' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ESTP">ESTP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ESTP') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ESTJ -->
+                    <div class="type-card" th:classappend="${'ESTJ' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ESTJ}" th:unless="${'ESTJ' == mbtiType}">
+                            <span class="type-badge" data-mbti="ESTJ">ESTJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ESTJ') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ESTJ' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ESTJ">ESTJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ESTJ') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- INFP -->
+                    <div class="type-card" th:classappend="${'INFP' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/INFP}" th:unless="${'INFP' == mbtiType}">
+                            <span class="type-badge" data-mbti="INFP">INFP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('INFP') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'INFP' == mbtiType}">
+                            <span class="type-badge current" data-mbti="INFP">INFP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('INFP') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- INFJ -->
+                    <div class="type-card" th:classappend="${'INFJ' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/INFJ}" th:unless="${'INFJ' == mbtiType}">
+                            <span class="type-badge" data-mbti="INFJ">INFJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('INFJ') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'INFJ' == mbtiType}">
+                            <span class="type-badge current" data-mbti="INFJ">INFJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('INFJ') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- INTP -->
+                    <div class="type-card" th:classappend="${'INTP' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/INTP}" th:unless="${'INTP' == mbtiType}">
+                            <span class="type-badge" data-mbti="INTP">INTP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('INTP') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'INTP' == mbtiType}">
+                            <span class="type-badge current" data-mbti="INTP">INTP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('INTP') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- INTJ -->
+                    <div class="type-card" th:classappend="${'INTJ' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/INTJ}" th:unless="${'INTJ' == mbtiType}">
+                            <span class="type-badge" data-mbti="INTJ">INTJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('INTJ') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'INTJ' == mbtiType}">
+                            <span class="type-badge current" data-mbti="INTJ">INTJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('INTJ') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ISFP -->
+                    <div class="type-card" th:classappend="${'ISFP' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ISFP}" th:unless="${'ISFP' == mbtiType}">
+                            <span class="type-badge" data-mbti="ISFP">ISFP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ISFP') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ISFP' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ISFP">ISFP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ISFP') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ISFJ -->
+                    <div class="type-card" th:classappend="${'ISFJ' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ISFJ}" th:unless="${'ISFJ' == mbtiType}">
+                            <span class="type-badge" data-mbti="ISFJ">ISFJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ISFJ') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ISFJ' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ISFJ">ISFJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ISFJ') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ISTP -->
+                    <div class="type-card" th:classappend="${'ISTP' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ISTP}" th:unless="${'ISTP' == mbtiType}">
+                            <span class="type-badge" data-mbti="ISTP">ISTP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ISTP') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ISTP' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ISTP">ISTP</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ISTP') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ISTJ -->
+                    <div class="type-card" th:classappend="${'ISTJ' == mbtiType ? 'current' : ''}">
+                        <a th:href="@{/mbti/ISTJ}" th:unless="${'ISTJ' == mbtiType}">
+                            <span class="type-badge" data-mbti="ISTJ">ISTJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ISTJ') ?: 0}">0</span>
+                        </a>
+                        <div th:if="${'ISTJ' == mbtiType}">
+                            <span class="type-badge current" data-mbti="ISTJ">ISTJ</span>
+                            <span class="type-count" th:text="${mbtiStats.get('ISTJ') ?: 0}">0</span>
+                            <span class="current-label">현재</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 푸터 -->
+        <footer class="footer">
+            <p>&copy; 2024 MBTI 테스트. <span th:text="${mbtiType}">ENFP</span> 타입에 대해 더 알아가세요! 🌈</p>
+        </footer>
+    </div>
+
+    <!-- 토스트 메시지 -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">메시지</span>
+        </div>
+    </div>
+
+    <script th:src="@{/js/mbti-type.js}"></script>
+    <script th:inline="javascript">
+        // 전역 변수 설정
+        window.mbtiTypeData = {
+            mbtiType: /*[[${mbtiType}]]*/ null,
+            mbtiInfo: /*[[${mbtiInfo}]]*/ {},
+            typeCount: /*[[${typeCount}]]*/ 0,
+            mbtiStats: /*[[${mbtiStats}]]*/ {}
+        };
+        
+        // 테스트 페이지로 이동 함수
+        function goToTest() {
+            window.location.href = '/test';
+        }
+        
+        // 타입 공유 함수
+        function shareThisType() {
+            const shareUrl = window.location.href;
+            const shareTitle = `${window.mbtiTypeData.mbtiType} 성격 유형 상세 분석`;
+            const shareText = `나는 ${window.mbtiTypeData.mbtiType} 성격 유형이에요! 당신의 MBTI는 무엇인가요?`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: shareTitle,
+                    text: shareText,
+                    url: shareUrl
+                }).catch(console.error);
+            } else {
+                // 클립보드에 복사
+                copyToClipboard(`${shareText}\n${shareUrl}`).then(() => {
+                    showToast('공유 내용이 클립보드에 복사되었습니다!');
+                }).catch(() => {
+                    showToast('공유에 실패했습니다.', 'error');
+                });
+            }
+        }
+        
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMbtiTypePage();
+            loadCareerRecommendations();
+            loadCompatibilityInfo();
+            loadCelebrities();
+            loadMbtiDistribution();
+            calculateTypeRanking();
+        });
+    </script>
+</body>
+</html>

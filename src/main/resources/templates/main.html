@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🧠</text></svg>">
     <title>AI 성격 분석 테스트 - 메인</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"></script>
 </head>
 <body>
     <!-- 네비게이션 바 -->
@@ -17,20 +19,23 @@
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a th:href="@{/}" class="nav-link">홈</a>
+                    <a href="/main" class="nav-link">홈</a>
                 </li>
                 <li class="nav-item">
-                    <a th:href="@{/test}" class="nav-link">테스트</a>
+                    <a href="/test" class="nav-link">테스트</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#info" class="nav-link">소개</a>
+                    <a href="/statistics" class="nav-link">📊 통계</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#contact" class="nav-link">문의</a>
+                    <a href="/comments" class="nav-link">💬 커뮤니티</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link">소개</a>
                 </li>
             </ul>
             <!-- F-Pattern: CTA는 우측 상단 -->
-            <button class="btn-nav-primary" onclick="window.location.href='/test'">무료 테스트</button>
+            <button class="btn-nav-primary" onclick="goToTest()">무료 테스트</button>
         </div>
     </nav>
 
@@ -78,11 +83,11 @@
                     
                     <!-- Fitts의 법칙: 적절한 버튼 크기 -->
                     <div class="hero-buttons">
-                        <button class="btn-large btn-primary" onclick="window.location.href='/test'">
+                        <button class="btn-large btn-primary" onclick="goToTest()">
                             <span>🚀</span>
                             테스트 시작하기
                         </button>
-                        <a href="#info" class="btn-large btn-secondary">
+                        <a href="/about" class="btn-large btn-secondary">
                             <span>📋</span>
                             자세히 보기
                         </a>
@@ -207,10 +212,29 @@
             <div class="cta-container">
                 <h2 class="cta-title">🎯 지금 바로 당신의 성격을 발견해보세요!</h2>
                 <p class="cta-subtitle">단 15개의 질문으로 당신만의 독특한 성격을 깊이 있게 분석합니다.</p>
-                <button class="cta-button" onclick="window.location.href='/test'">
+                <button class="cta-button" onclick="goToTest()">
                     <span>🚀</span> 무료로 시작하기
                 </button>
                 <p class="cta-note">⏱️ 약 5-10분 소요 | 💾 자동 저장 기능 | 🎁 완전 무료</p>
+                
+                <!-- 간단한 공유 버튼들 -->
+                <div class="quick-share">
+                    <p class="share-text">📢 친구들에게도 추천해보세요!</p>
+                    <div class="quick-share-buttons">
+                        <button class="quick-share-btn kakao" onclick="shareMainPage('kakao')" title="카카오톡 공유">
+                            <i class="fas fa-comment"></i>
+                        </button>
+                        <button class="quick-share-btn facebook" onclick="shareMainPage('facebook')" title="페이스북 공유">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="quick-share-btn twitter" onclick="shareMainPage('twitter')" title="트위터 공유">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="quick-share-btn link" onclick="shareMainPage('link')" title="링크 복사">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -219,25 +243,22 @@
         <div class="footer-content">
             <p>&copy; 2025 PersonaAI. Made with ❤️</p>
             <div class="footer-links">
-                <a href="#privacy">개인정보처리방침</a>
-                <a href="#terms">이용약관</a>
-                <a href="#contact">문의하기</a>
+                <a href="/privacy">개인정보처리방침</a>
+                <a href="/terms">이용약관</a>
+                <a href="/contact">문의하기</a>
             </div>
         </div>
     </footer>
 
     <script>
+        function goToTest() {
+            // /test 페이지로 이동
+            window.location.href = '/test';
+        }
+        
         function startTest() {
-            // 시각적 피드백
-            if (event && event.target) {
-                event.target.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    event.target.style.transform = '';
-                    window.location.href = '/test';
-                }, 150);
-            } else {
-                window.location.href = '/test';
-            }
+            // 기존 호환성을 위해 남겨둠 - goToTest()와 동일
+            goToTest();
         }
 
         // 부드러운 스크롤
@@ -254,6 +275,726 @@
             });
         });
 
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    copyToClipboard(`${shareText}\n${shareUrl}`).then(() => {
+                        showShareToast('공유 내용이 복사되었습니다! 📋');
+                    });
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
+                }
+            });
+
+        // 카카오 SDK 초기화
+        if (typeof Kakao !== 'undefined') {
+            // 실제 사용시에는 환경변수로 API 키를 설정하세요
+            // Kakao.init('YOUR_KAKAO_API_KEY');
+        }
+
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: shareTitle,
+                                description: shareText,
+                                imageUrl: window.location.origin + '/images/main-og-image.jpg',
+                                link: {
+                                    mobileWebUrl: shareUrl,
+                                    webUrl: shareUrl
+                                }
+                            },
+                            buttons: [
+                                {
+                                    title: '테스트 시작하기',
+                                    link: {
+                                        mobileWebUrl: shareUrl,
+                                        webUrl: shareUrl
+                                    }
+                                }
+                            ]
+                        });
+                        showShareToast('카카오톡으로 공유했습니다! 💛');
+                    } else {
+                        copyToClipboard(`${shareText}
+${shareUrl}`).then(() => {
+                            showShareToast('공유 내용이 복사되었습니다! 📋');
+                        });
+                    }
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
+        });
+
+        // 카카오 SDK 초기화
+        if (typeof Kakao !== 'undefined') {
+            // 실제 사용시에는 환경변수로 API 키를 설정하세요
+            // Kakao.init('YOUR_KAKAO_API_KEY');
+        }
+
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: shareTitle,
+                                description: shareText,
+                                imageUrl: window.location.origin + '/images/main-og-image.jpg',
+                                link: {
+                                    mobileWebUrl: shareUrl,
+                                    webUrl: shareUrl
+                                }
+                            },
+                            buttons: [
+                                {
+                                    title: '테스트 시작하기',
+                                    link: {
+                                        mobileWebUrl: shareUrl,
+                                        webUrl: shareUrl
+                                    }
+                                }
+                            ]
+                        });
+                        showShareToast('카카오톡으로 공유했습니다! 💛');
+                    } else {
+                        copyToClipboard(`${shareText}
+${shareUrl}`).then(() => {
+                            showShareToast('공유 내용이 복사되었습니다! 📋');
+                        });
+                    }
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
+
         // 네비게이션 스크롤 효과
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
@@ -263,6 +1004,256 @@
                 navbar.classList.remove('scrolled');
             }
         });
+
+        // 카카오 SDK 초기화
+        if (typeof Kakao !== 'undefined') {
+            // 실제 사용시에는 환경변수로 API 키를 설정하세요
+            // Kakao.init('YOUR_KAKAO_API_KEY');
+        }
+
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: shareTitle,
+                                description: shareText,
+                                imageUrl: window.location.origin + '/images/main-og-image.jpg',
+                                link: {
+                                    mobileWebUrl: shareUrl,
+                                    webUrl: shareUrl
+                                }
+                            },
+                            buttons: [
+                                {
+                                    title: '테스트 시작하기',
+                                    link: {
+                                        mobileWebUrl: shareUrl,
+                                        webUrl: shareUrl
+                                    }
+                                }
+                            ]
+                        });
+                        showShareToast('카카오톡으로 공유했습니다! 💛');
+                    } else {
+                        copyToClipboard(`${shareText}
+${shareUrl}`).then(() => {
+                            showShareToast('공유 내용이 복사되었습니다! 📋');
+                        });
+                    }
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
 
         // 인터섹션 옵저버로 부드러운 등장 효과
         const observerOptions = {
@@ -277,6 +1268,256 @@
                     entry.target.style.transform = 'translateY(0)';
                 }
             });
+
+        // 카카오 SDK 초기화
+        if (typeof Kakao !== 'undefined') {
+            // 실제 사용시에는 환경변수로 API 키를 설정하세요
+            // Kakao.init('YOUR_KAKAO_API_KEY');
+        }
+
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: shareTitle,
+                                description: shareText,
+                                imageUrl: window.location.origin + '/images/main-og-image.jpg',
+                                link: {
+                                    mobileWebUrl: shareUrl,
+                                    webUrl: shareUrl
+                                }
+                            },
+                            buttons: [
+                                {
+                                    title: '테스트 시작하기',
+                                    link: {
+                                        mobileWebUrl: shareUrl,
+                                        webUrl: shareUrl
+                                    }
+                                }
+                            ]
+                        });
+                        showShareToast('카카오톡으로 공유했습니다! 💛');
+                    } else {
+                        copyToClipboard(`${shareText}
+${shareUrl}`).then(() => {
+                            showShareToast('공유 내용이 복사되었습니다! 📋');
+                        });
+                    }
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
         }, observerOptions);
 
         // 카드들에 부드러운 등장 효과 적용
@@ -286,6 +1527,256 @@
             card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(card);
         });
+
+        // 카카오 SDK 초기화
+        if (typeof Kakao !== 'undefined') {
+            // 실제 사용시에는 환경변수로 API 키를 설정하세요
+            // Kakao.init('YOUR_KAKAO_API_KEY');
+        }
+
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: shareTitle,
+                                description: shareText,
+                                imageUrl: window.location.origin + '/images/main-og-image.jpg',
+                                link: {
+                                    mobileWebUrl: shareUrl,
+                                    webUrl: shareUrl
+                                }
+                            },
+                            buttons: [
+                                {
+                                    title: '테스트 시작하기',
+                                    link: {
+                                        mobileWebUrl: shareUrl,
+                                        webUrl: shareUrl
+                                    }
+                                }
+                            ]
+                        });
+                        showShareToast('카카오톡으로 공유했습니다! 💛');
+                    } else {
+                        copyToClipboard(`${shareText}
+${shareUrl}`).then(() => {
+                            showShareToast('공유 내용이 복사되었습니다! 📋');
+                        });
+                    }
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
 
         // 3D 카드 마우스 트래킹 효과 (미세하게)
         document.querySelectorAll('.personality-card').forEach(card => {
@@ -303,11 +1794,761 @@
                 
                 card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px) scale(1.03)`;
             });
+
+        // 카카오 SDK 초기화
+        if (typeof Kakao !== 'undefined') {
+            // 실제 사용시에는 환경변수로 API 키를 설정하세요
+            // Kakao.init('YOUR_KAKAO_API_KEY');
+        }
+
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: shareTitle,
+                                description: shareText,
+                                imageUrl: window.location.origin + '/images/main-og-image.jpg',
+                                link: {
+                                    mobileWebUrl: shareUrl,
+                                    webUrl: shareUrl
+                                }
+                            },
+                            buttons: [
+                                {
+                                    title: '테스트 시작하기',
+                                    link: {
+                                        mobileWebUrl: shareUrl,
+                                        webUrl: shareUrl
+                                    }
+                                }
+                            ]
+                        });
+                        showShareToast('카카오톡으로 공유했습니다! 💛');
+                    } else {
+                        copyToClipboard(`${shareText}
+${shareUrl}`).then(() => {
+                            showShareToast('공유 내용이 복사되었습니다! 📋');
+                        });
+                    }
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
             
             card.addEventListener('mouseleave', function() {
                 card.style.transform = '';
             });
+
+        // 카카오 SDK 초기화
+        if (typeof Kakao !== 'undefined') {
+            // 실제 사용시에는 환경변수로 API 키를 설정하세요
+            // Kakao.init('YOUR_KAKAO_API_KEY');
+        }
+
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: shareTitle,
+                                description: shareText,
+                                imageUrl: window.location.origin + '/images/main-og-image.jpg',
+                                link: {
+                                    mobileWebUrl: shareUrl,
+                                    webUrl: shareUrl
+                                }
+                            },
+                            buttons: [
+                                {
+                                    title: '테스트 시작하기',
+                                    link: {
+                                        mobileWebUrl: shareUrl,
+                                        webUrl: shareUrl
+                                    }
+                                }
+                            ]
+                        });
+                        showShareToast('카카오톡으로 공유했습니다! 💛');
+                    } else {
+                        copyToClipboard(`${shareText}
+${shareUrl}`).then(() => {
+                            showShareToast('공유 내용이 복사되었습니다! 📋');
+                        });
+                    }
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
         });
+
+        // 카카오 SDK 초기화
+        if (typeof Kakao !== 'undefined') {
+            // 실제 사용시에는 환경변수로 API 키를 설정하세요
+            // Kakao.init('YOUR_KAKAO_API_KEY');
+        }
+
+        // 메인 페이지 공유 함수들
+        function shareMainPage(platform) {
+            const shareUrl = window.location.href;
+            const shareTitle = 'AI 성격 분석 테스트 - 정확한 MBTI 테스트';
+            const shareText = '정확한 MBTI 성격 테스트로 나의 진짜 성격을 알아보세요! 당신도 테스트해보세요 🔥';
+            
+            switch(platform) {
+                case 'kakao':
+                    if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: shareTitle,
+                                description: shareText,
+                                imageUrl: window.location.origin + '/images/main-og-image.jpg',
+                                link: {
+                                    mobileWebUrl: shareUrl,
+                                    webUrl: shareUrl
+                                }
+                            },
+                            buttons: [
+                                {
+                                    title: '테스트 시작하기',
+                                    link: {
+                                        mobileWebUrl: shareUrl,
+                                        webUrl: shareUrl
+                                    }
+                                }
+                            ]
+                        });
+                        showShareToast('카카오톡으로 공유했습니다! 💛');
+                    } else {
+                        copyToClipboard(`${shareText}
+${shareUrl}`).then(() => {
+                            showShareToast('공유 내용이 복사되었습니다! 📋');
+                        });
+                    }
+                    break;
+                    
+                case 'facebook':
+                    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    window.open(facebookUrl, '_blank', 'width=600,height=400');
+                    showShareToast('페이스북으로 공유했습니다! 💙');
+                    break;
+                    
+                case 'twitter':
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    showShareToast('트위터로 공유했습니다! 🐦');
+                    break;
+                    
+                case 'link':
+                    copyToClipboard(shareUrl).then(() => {
+                        showShareToast('링크가 클립보드에 복사되었습니다! 🔗');
+                    }).catch(() => {
+                        showShareToast('링크 복사에 실패했습니다.', 'error');
+                    });
+                    break;
+            }
+        }
+
+        // 클립보드 복사 함수
+        async function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // 공유 토스트 메시지
+        function showShareToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `share-toast ${type}`;
+            toast.innerHTML = `
+                <div class="share-toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- 공유 관련 스타일 -->
+    <style>
+        .quick-share {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .share-text {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+        }
+        
+        .quick-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-share-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-share-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .quick-share-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-share-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-share-btn.kakao {
+            background: linear-gradient(135deg, #FEE500, #F7E600);
+            color: #3c1e1e;
+        }
+        
+        .quick-share-btn.facebook {
+            background: linear-gradient(135deg, #1877F2, #166FE5);
+        }
+        
+        .quick-share-btn.twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0D8BD9);
+        }
+        
+        .quick-share-btn.link {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+        
+        .share-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+        }
+        
+        .share-toast.error {
+            border-left-color: #ef4444;
+        }
+        
+        .share-toast.show {
+            transform: translateX(0);
+        }
+        
+        .share-toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .share-toast-content i {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+        
+        .share-toast.error .share-toast-content i {
+            color: #ef4444;
+        }
+        
+        .share-toast-content span {
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 640px) {
+            .quick-share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .share-toast {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
     </script>
 </body>
 </html>

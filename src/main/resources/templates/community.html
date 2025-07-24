@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI 커뮤니티 | MBTI 성격유형검사</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/community.css">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="MBTI 커뮤니티">
+    <meta property="og:description" content="다른 사람들의 MBTI 결과를 보고 댓글로 소통해보세요">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mbtitest.site/community">
+    
+    <style>
+        .community-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .community-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 20px;
+            background: white;
+            color: #6B7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .filter-tab.active {
+            border-color: #6366F1;
+            background: #6366F1;
+            color: white;
+        }
+
+        .filter-tab:hover {
+            border-color: #6366F1;
+        }
+
+        .results-grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .mbti-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .result-time {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+
+        .result-content {
+            margin-bottom: 15px;
+        }
+
+        .result-description {
+            color: #374151;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .result-analysis {
+            color: #6B7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .result-analysis.expanded {
+            max-height: none;
+        }
+
+        .expand-btn {
+            color: #6366F1;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .expand-btn:hover {
+            text-decoration: underline;
+        }
+
+        .result-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid #F3F4F6;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .result-stats {
+            display: flex;
+            gap: 15px;
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 20px;
+            background: white;
+            color: #6B7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover {
+            border-color: #6366F1;
+            color: #6366F1;
+        }
+
+        .action-btn.active {
+            background: #6366F1;
+            border-color: #6366F1;
+            color: white;
+        }
+
+        .comments-section {
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .comments-section.show {
+            display: block;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            resize: none;
+        }
+
+        .comment-submit {
+            padding: 8px 16px;
+            background: #6366F1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .comment-submit:hover {
+            background: #5856EB;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .comment-item {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .author-mbti {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .comment-content {
+            color: #374151;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .comment-time {
+            color: #9CA3AF;
+            font-size: 0.8rem;
+        }
+
+        .load-more {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .load-more-btn {
+            padding: 10px 24px;
+            background: #6366F1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .load-more-btn:hover {
+            background: #5856EB;
+        }
+
+        .load-more-btn:disabled {
+            background: #9CA3AF;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: #6B7280;
+        }
+
+        .loading-spinner {
+            animate: spin 1s linear infinite;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #E5E7EB;
+            border-top: 2px solid #6366F1;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6B7280;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .community-container {
+                padding: 15px;
+            }
+            
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .result-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .filter-tabs {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    🧠 MBTI 검사
+                </a>
+                <nav class="nav">
+                    <a href="/">홈</a>
+                    <a href="/test">테스트</a>
+                    <a href="/community" class="active">커뮤니티</a>
+                    <a href="/stats">통계</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="community-container">
+        <!-- Page Header -->
+        <div class="community-header">
+            <h1>💬 MBTI 커뮤니티</h1>
+            <p>다른 사람들의 MBTI 결과를 보고 댓글로 소통해보세요!</p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="recent">
+                🕒 최신순
+            </button>
+            <button class="filter-tab" data-filter="popular">
+                🔥 인기순
+            </button>
+            <button class="filter-tab" data-filter="commented">
+                💬 댓글많은순
+            </button>
+            <button class="filter-tab" data-filter="viral">
+                📈 바이럴
+            </button>
+            <button class="filter-tab" data-filter="enfp">
+                ENFP
+            </button>
+            <button class="filter-tab" data-filter="infp">
+                INFP
+            </button>
+            <button class="filter-tab" data-filter="enfj">
+                ENFJ
+            </button>
+            <button class="filter-tab" data-filter="infj">
+                INFJ
+            </button>
+        </div>
+
+        <!-- Results Grid -->
+        <div class="results-grid" id="resultsGrid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                결과를 불러오는 중...
+            </div>
+        </div>
+
+        <!-- Load More Button -->
+        <div class="load-more">
+            <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreResults()">
+                더 보기
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 MBTI 성격유형검사. All rights reserved.</p>
+            <p>정확한 AI 분석으로 나의 성격을 알아보세요!</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/js/community.js"></script>
+    <script>
+        // 페이지 로딩 시 커뮤니티 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 서버에서 전달된 초기 데이터가 있다면 사용
+            const initialStats = /*[[${communityStats}]]*/ null;
+            
+            // 커뮤니티 초기화
+            initializeCommunity();
+        });
+    </script>
+</body>
+</html>
