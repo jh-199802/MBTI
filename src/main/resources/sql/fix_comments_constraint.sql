@@ -1,0 +1,67 @@
+-- =============================================
+-- COMMENTS 테이블 제약조건 수정
+-- RESULT_ID를 NULL 허용으로 변경 (커뮤니티 댓글용)
+-- =============================================
+
+-- 1. 외래키 제약조건 확인 및 제거
+DECLARE
+    constraint_exists NUMBER;
+BEGIN
+    -- FK_COMMENT_RESULT 제약조건이 있는지 확인
+    SELECT COUNT(*) INTO constraint_exists
+    FROM USER_CONSTRAINTS
+    WHERE CONSTRAINT_NAME = 'FK_COMMENT_RESULT' AND TABLE_NAME = 'COMMENTS';
+    
+    -- 있다면 제거
+    IF constraint_exists > 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE COMMENTS DROP CONSTRAINT FK_COMMENT_RESULT';
+        DBMS_OUTPUT.PUT_LINE('외래키 제약조건 FK_COMMENT_RESULT가 제거되었습니다.');
+    END IF;
+    
+    -- FK_COMMENTS_RESULT 제약조건도 확인 (다른 이름일 수 있음)
+    SELECT COUNT(*) INTO constraint_exists
+    FROM USER_CONSTRAINTS
+    WHERE CONSTRAINT_NAME = 'FK_COMMENTS_RESULT' AND TABLE_NAME = 'COMMENTS';
+    
+    IF constraint_exists > 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE COMMENTS DROP CONSTRAINT FK_COMMENTS_RESULT';
+        DBMS_OUTPUT.PUT_LINE('외래키 제약조건 FK_COMMENTS_RESULT가 제거되었습니다.');
+    END IF;
+END;
+/
+
+-- 2. RESULT_ID 컬럼을 NULL 허용으로 변경
+ALTER TABLE COMMENTS MODIFY RESULT_ID NUMBER(10) NULL;
+
+-- 3. 외래키 제약조건을 다시 추가 (NULL 허용)
+ALTER TABLE COMMENTS 
+ADD CONSTRAINT FK_COMMENT_RESULT 
+FOREIGN KEY (RESULT_ID) REFERENCES TEST_RESULTS(RESULT_ID) ON DELETE CASCADE;
+
+-- 4. 기존 데이터 중 -1 값을 NULL로 변경 (혹시 있다면)
+UPDATE COMMENTS SET RESULT_ID = NULL WHERE RESULT_ID = -1;
+
+COMMIT;
+
+-- 5. 변경사항 확인
+SELECT 
+    COLUMN_NAME, 
+    DATA_TYPE, 
+    DATA_LENGTH, 
+    NULLABLE,
+    DATA_DEFAULT
+FROM USER_TAB_COLUMNS 
+WHERE TABLE_NAME = 'COMMENTS' 
+AND COLUMN_NAME = 'RESULT_ID';
+
+-- 6. 제약조건 확인
+SELECT 
+    CONSTRAINT_NAME, 
+    CONSTRAINT_TYPE, 
+    SEARCH_CONDITION,
+    R_CONSTRAINT_NAME
+FROM USER_CONSTRAINTS 
+WHERE TABLE_NAME = 'COMMENTS';
+
+DBMS_OUTPUT.PUT_LINE('COMMENTS 테이블의 RESULT_ID 컬럼이 NULL 허용으로 변경되었습니다.');
+DBMS_OUTPUT.PUT_LINE('이제 커뮤니티 댓글(특정 테스트 결과와 연결되지 않은 댓글)을 작성할 수 있습니다.');
