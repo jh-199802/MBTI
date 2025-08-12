@@ -23,8 +23,7 @@ public class Comment {
     private Long commentId;
     
     @Column(name = "RESULT_ID")
-    @Builder.Default
-    private Long resultId = -1L;  // NULL 대신 -1을 기본값으로 사용
+    private Long resultId;  // NULL 허용
     
     // 사용자 연관관계 추가
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +36,7 @@ public class Comment {
     @Column(name = "NICKNAME", length = 50)
     private String nickname; // 익명 댓글용 (user가 null일 때 사용)
     
-    @Column(name = "COMMENT_TEXT", nullable = false)
+    @Column(name = "CONTENT", nullable = false)
     @Lob
     private String commentText;
     

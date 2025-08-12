@@ -91,6 +91,14 @@ public class CommentController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> addComment(@RequestBody Map<String, Object> request,
                                                         HttpServletRequest httpRequest) {
+        log.info("=== 댓글 작성 API 호출됨 ===");
+        log.info("Request URI: {}", httpRequest.getRequestURI());
+        log.info("Request Method: {}", httpRequest.getMethod());
+        log.info("Content Type: {}", httpRequest.getContentType());
+        log.info("Request Headers: ");
+        httpRequest.getHeaderNames().asIterator().forEachRemaining(headerName -> 
+            log.info("  {}: {}", headerName, httpRequest.getHeader(headerName)));
+        
         try {
             log.info("댓글 작성 요청 받음: {}", request);
             
@@ -109,7 +117,7 @@ public class CommentController {
             String nickname = (nicknameObj != null) ? nicknameObj.toString() : null;
             String commentText = (commentTextObj != null) ? commentTextObj.toString() : null;
             
-            log.debug("Converted data - resultIdStr: {}, mbtiType: {}, nickname: {}, commentText length: {}", 
+            log.info("Converted data - resultIdStr: {}, mbtiType: {}, nickname: {}, commentText length: {}", 
                 resultIdStr, mbtiType, nickname, commentText != null ? commentText.length() : 0);
             
             // 입력값 검증
@@ -155,11 +163,11 @@ public class CommentController {
             ));
             
         } catch (RuntimeException e) {
-            log.warn("댓글 작성 실패: {}", e.getMessage());
+            log.error("댓글 작성 실패 - RuntimeException: {}", e.getMessage(), e);
             return ResponseEntity.badRequest()
                 .body(Map.of("success", false, "message", e.getMessage()));
         } catch (Exception e) {
-            log.error("댓글 작성 중 오류 발생", e);
+            log.error("댓글 작성 중 예상치 못한 오류 발생", e);
             return ResponseEntity.internalServerError()
                 .body(Map.of("success", false, "message", "댓글 작성 중 오류가 발생했습니다."));
         }

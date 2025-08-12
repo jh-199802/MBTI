@@ -46,8 +46,15 @@ public class CommentService {
         checkSpamPrevention(userIp);
         
         try {
+            // resultId가 null인 경우는 커뮤니티 댓글로 처리
+            if (resultId != null) {
+                log.info("특정 테스트 결과({})에 대한 댓글 작성", resultId);
+            } else {
+                log.info("커뮤니티 댓글 작성 (resultId = null)");
+            }
+            
             Comment comment = Comment.builder()
-                .resultId(resultId != null ? resultId : -1L)  // NULL 대신 -1 사용
+                .resultId(resultId)  // null 허용 (커뮤니티 댓글)
                 .mbtiType(mbtiType.toUpperCase())
                 .nickname(nickname != null ? nickname.trim() : null)
                 .commentText(commentText.trim())
@@ -59,8 +66,8 @@ public class CommentService {
             log.debug("댓글 엔티티 생성 완료: {}", comment);
             
             Comment savedComment = commentRepository.save(comment);
-            log.info("댓글 작성 완료 - ID: {}, MBTI: {}, IP: {}", 
-                savedComment.getCommentId(), mbtiType, userIp);
+            log.info("댓글 작성 완료 - ID: {}, MBTI: {}, IP: {}, resultId: {}", 
+                savedComment.getCommentId(), mbtiType, userIp, resultId);
             
             return savedComment;
             
@@ -69,6 +76,7 @@ public class CommentService {
             throw new RuntimeException("댓글 저장 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
     }
+
     
     /**
      * 특정 MBTI 타입의 댓글들 조회

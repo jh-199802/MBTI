@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/test/**", "/api/share/**", "/api/view/**").permitAll()
                 .requestMatchers("/user/api/register", "/user/api/login", "/user/api/check-**").permitAll()
                 .requestMatchers("/user/api/current").permitAll()
+                .requestMatchers("/comments/api/**").permitAll() // 임시로 댓글 API 허용
                 
                 // 사용자 인증 관련 페이지들
                 .requestMatchers("/user/register", "/user/login").permitAll()

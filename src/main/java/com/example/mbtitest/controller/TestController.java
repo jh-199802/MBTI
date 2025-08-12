@@ -1,1 +1,13 @@
-// 삭제됨 - 경로 충돌 해결을 위해
+package com.example.mbtitest.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class TestController {
+    
+    @GetMapping("/testest")
+    public String testPage() {
+        return "redirect:/awesome-test.html";
+    }
+}

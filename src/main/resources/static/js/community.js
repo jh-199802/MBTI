@@ -129,16 +129,6 @@ function setupCommentForm() {
 
     commentForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // 로그인 상태 재확인
-        if (!currentUser) {
-            showToast('로그인이 필요합니다!', 'error');
-            setTimeout(() => {
-                window.location.href = `/user/login?redirectUrl=${encodeURIComponent(window.location.pathname)}`;
-            }, 1500);
-            return;
-        }
-        
         submitComment();
     });
 
